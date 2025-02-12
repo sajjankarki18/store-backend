@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
@@ -10,17 +11,70 @@ import { BannerRepository } from './repositories/banner.repository';
 import { Banner } from './entities/banner.entity';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
+import { RedirectTypeEnum } from 'src/enums/redirectTypes.enum';
+import { Product } from '../products/entities/product.entity';
+import { ProductRepository } from 'src/products/repositories/product.repository';
+import { Category } from '../categories/entities/category.entity';
+import { CategoryRepository } from '../categories/repositories/Category.repository';
 
-const banners_limit: number = parseInt(process.env.BANNERS_LIMIT);
+const banners_limit: number = parseInt(process.env.BANNERS_LIMIT) || 5;
 
 @Injectable()
 export class BannersService {
   constructor(
     @InjectRepository(Banner)
     private readonly bannerRepository: BannerRepository,
+    @InjectRepository(Product)
+    private readonly productsRepository: ProductRepository,
+    @InjectRepository(Category)
+    private readonly categoriesRepository: CategoryRepository,
   ) {}
 
+  //validation before creating or updating the banners, check if the redirects exists on the accociated tables
+  validateRedirects = async (
+    redirectId: string,
+    redirectType: RedirectTypeEnum,
+  ) => {
+    //ensure both fiels are provided before validating
+    if (!redirectId || !redirectType) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: ['redirect fields are missing'],
+        error: 'Not Found',
+      });
+    }
+    if (redirectType === RedirectTypeEnum.Category) {
+      const category = await this.categoriesRepository.findOne({
+        where: { id: redirectId },
+      });
+
+      if (!category) {
+        throw new BadRequestException({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ['Invalid redirect id'],
+          error: 'Bad Request',
+        });
+      }
+    } else if (redirectType === RedirectTypeEnum.Product) {
+      const product = await this.productsRepository.findOne({
+        where: { id: redirectId },
+      });
+
+      if (!product) {
+        throw new BadRequestException({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ['Invalid redirect id'],
+          error: 'Bad Request',
+        });
+      }
+    }
+  };
+
   async createBanner(bannerDto: CreateBannerDto): Promise<Banner> {
+    await this.validateRedirects(
+      bannerDto.redirect_id,
+      bannerDto.redirect_type,
+    );
     //a banner should be of limited total
     const banners = await this.bannerRepository.count();
     if (banners >= banners_limit) {
@@ -73,6 +127,10 @@ export class BannersService {
   }
 
   async updateBanner(id: string, bannerDto: UpdateBannerDto): Promise<Banner> {
+    await this.validateRedirects(
+      bannerDto.redirect_id,
+      bannerDto.redirect_type,
+    );
     const banner = await this.bannerRepository.findOne({ where: { id } });
 
     if (!banner) {
@@ -104,7 +162,7 @@ export class BannersService {
     }
   }
 
-  async deleteBanner(id: string) {
+  async deleteBanner(id: string): Promise<{ id: string; message: string }> {
     const banner = await this.bannerRepository.findOne({ where: { id } });
 
     if (!banner) {

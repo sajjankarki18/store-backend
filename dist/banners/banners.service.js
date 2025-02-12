@@ -17,12 +17,53 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const banner_repository_1 = require("./repositories/banner.repository");
 const banner_entity_1 = require("./entities/banner.entity");
-const banners_limit = parseInt(process.env.BANNERS_LIMIT);
+const redirectTypes_enum_1 = require("../enums/redirectTypes.enum");
+const product_entity_1 = require("../products/entities/product.entity");
+const product_repository_1 = require("../products/repositories/product.repository");
+const category_entity_1 = require("../categories/entities/category.entity");
+const Category_repository_1 = require("../categories/repositories/Category.repository");
+const banners_limit = parseInt(process.env.BANNERS_LIMIT) || 5;
 let BannersService = class BannersService {
-    constructor(bannerRepository) {
+    constructor(bannerRepository, productsRepository, categoriesRepository) {
         this.bannerRepository = bannerRepository;
+        this.productsRepository = productsRepository;
+        this.categoriesRepository = categoriesRepository;
+        this.validateRedirects = async (redirectId, redirectType) => {
+            if (!redirectId || !redirectType) {
+                throw new common_1.NotFoundException({
+                    statusCode: common_1.HttpStatus.NOT_FOUND,
+                    message: ['redirect fields are missing'],
+                    error: 'Not Found',
+                });
+            }
+            if (redirectType === redirectTypes_enum_1.RedirectTypeEnum.Category) {
+                const category = await this.categoriesRepository.findOne({
+                    where: { id: redirectId },
+                });
+                if (!category) {
+                    throw new common_1.BadRequestException({
+                        statusCode: common_1.HttpStatus.BAD_REQUEST,
+                        message: ['Invalid redirect id'],
+                        error: 'Bad Request',
+                    });
+                }
+            }
+            else if (redirectType === redirectTypes_enum_1.RedirectTypeEnum.Product) {
+                const product = await this.productsRepository.findOne({
+                    where: { id: redirectId },
+                });
+                if (!product) {
+                    throw new common_1.BadRequestException({
+                        statusCode: common_1.HttpStatus.BAD_REQUEST,
+                        message: ['Invalid redirect id'],
+                        error: 'Bad Request',
+                    });
+                }
+            }
+        };
     }
     async createBanner(bannerDto) {
+        await this.validateRedirects(bannerDto.redirect_id, bannerDto.redirect_type);
         const banners = await this.bannerRepository.count();
         if (banners >= banners_limit) {
             throw new common_1.ConflictException({
@@ -68,6 +109,7 @@ let BannersService = class BannersService {
         };
     }
     async updateBanner(id, bannerDto) {
+        await this.validateRedirects(bannerDto.redirect_id, bannerDto.redirect_type);
         const banner = await this.bannerRepository.findOne({ where: { id } });
         if (!banner) {
             throw new common_1.NotFoundException({
@@ -119,6 +161,10 @@ exports.BannersService = BannersService;
 exports.BannersService = BannersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(banner_entity_1.Banner)),
-    __metadata("design:paramtypes", [banner_repository_1.BannerRepository])
+    __param(1, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
+    __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __metadata("design:paramtypes", [banner_repository_1.BannerRepository,
+        product_repository_1.ProductRepository,
+        Category_repository_1.CategoryRepository])
 ], BannersService);
 //# sourceMappingURL=banners.service.js.map

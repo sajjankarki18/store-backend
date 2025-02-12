@@ -6,6 +6,7 @@ export declare class Banner {
     description: string;
     redirect_type: RedirectTypeEnum;
     redirect_id: string;
+    image_url: string;
     is_active: boolean;
     status: StatusEnum;
     created_at: Date;

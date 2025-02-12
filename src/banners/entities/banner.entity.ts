@@ -26,6 +26,9 @@ export class Banner {
   @Column({ nullable: true })
   redirect_id: string;
 
+  @Column({ nullable: true })
+  image_url: string;
+
   @Column({ default: false })
   is_active: boolean;
 
