@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import { StatusEnum } from 'src/enums/status.enum';
 
 export class CreateCategoryDto {
   @IsOptional()
@@ -16,4 +17,9 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsString({ message: 'Invalid image' })
   image_url: string;
+
+  @IsEnum(StatusEnum, {
+    message: 'The status must be either of published or draft',
+  })
+  status: StatusEnum;
 }

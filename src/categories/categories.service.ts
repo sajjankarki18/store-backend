@@ -11,6 +11,7 @@ import { Category } from './entities/category.entity';
 import { CategoryRepository } from './repositories/Category.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { StatusEnum } from 'src/enums/status.enum';
 
 @Injectable()
 export class CategoriesService {
@@ -19,7 +20,9 @@ export class CategoriesService {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  validateCategoryUpdation = async (categoryDto: UpdateCategoryDto) => {
+  validateCategoryUpdation = async (
+    categoryDto: UpdateCategoryDto,
+  ): Promise<void> => {
     if (categoryDto.parent_id) {
       const childCategory = await this.categoryRepository.findOne({
         where: {
@@ -65,6 +68,7 @@ export class CategoriesService {
         title: categoryDto.title,
         description: categoryDto.description,
         parent_id: categoryDto.parent_id,
+        status: categoryDto.status || StatusEnum.Draft,
       });
 
       return await this.categoryRepository.save(category);
@@ -98,7 +102,8 @@ export class CategoriesService {
       });
     }
 
-    const new_limit: number = limit > 10 ? 10 : limit;
+    const new_limit: number =
+      limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
 
     const [data, total] = await this.categoryRepository.findAndCount({
       skip: (page - 1) * new_limit,
@@ -153,6 +158,7 @@ export class CategoriesService {
           description: categoryDto.description,
           parent_id: categoryDto.parent_id,
           image_url: categoryDto.image_url,
+          status: categoryDto.status,
         },
       );
 

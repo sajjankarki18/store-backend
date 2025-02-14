@@ -25,6 +25,13 @@ let CategoriesAdminController = class CategoriesAdminController {
         return this.categoriesService.createCategory(categoryDto);
     }
     fetchAllCategories(page = 1, limit = 10) {
+        if (!page || !limit) {
+            throw new common_1.BadRequestException({
+                statusCode: common_1.HttpStatus.BAD_REQUEST,
+                message: ['page and limit fields are empty!'],
+                error: 'Bad Request',
+            });
+        }
         return this.categoriesService.fetchAllCategories({ page, limit });
     }
     fetchCategoryById(id) {

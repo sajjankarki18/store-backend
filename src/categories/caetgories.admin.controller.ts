@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -26,6 +28,13 @@ export class CategoriesAdminController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ) {
+    if (!page || !limit) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ['page and limit fields are empty!'],
+        error: 'Bad Request',
+      });
+    }
     return this.categoriesService.fetchAllCategories({ page, limit });
   }
 

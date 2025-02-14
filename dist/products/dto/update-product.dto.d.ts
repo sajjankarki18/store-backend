@@ -1,5 +1,5 @@
-import { CreateCategoryDto } from '../../categories/dto/create-category.dto';
-declare const UpdateProductDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateCategoryDto>>;
+import { CreateProductDto } from './create-product.dto';
+declare const UpdateProductDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateProductDto>>;
 export declare class UpdateProductDto extends UpdateProductDto_base {
     readonly id: string;
 }

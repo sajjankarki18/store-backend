@@ -9,36 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateCategoryDto = void 0;
+exports.CreateProductVariantDto = void 0;
 const class_validator_1 = require("class-validator");
-const status_enum_1 = require("../../enums/status.enum");
-class CreateCategoryDto {
+const variants_enum_1 = require("../../enums/variants.enum");
+class CreateProductVariantDto {
 }
-exports.CreateCategoryDto = CreateCategoryDto;
+exports.CreateProductVariantDto = CreateProductVariantDto;
 __decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)({ message: 'Enter a valid title' }),
-    __metadata("design:type", String)
-], CreateCategoryDto.prototype, "title", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)({ message: 'Enter a valid description' }),
-    __metadata("design:type", String)
-], CreateCategoryDto.prototype, "description", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)
-], CreateCategoryDto.prototype, "parent_id", void 0);
+], CreateProductVariantDto.prototype, "product_id", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)({ message: 'Invalid image' }),
+    (0, class_validator_1.IsEnum)(variants_enum_1.ProductVariantColorsEnum, { message: 'Invalid variant color' }),
     __metadata("design:type", String)
-], CreateCategoryDto.prototype, "image_url", void 0);
+], CreateProductVariantDto.prototype, "color", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(status_enum_1.StatusEnum, {
-        message: 'The status must be either of published or draft',
-    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(variants_enum_1.ProductVariantsSizeEnum, { message: 'Invalid variant size' }),
     __metadata("design:type", String)
-], CreateCategoryDto.prototype, "status", void 0);
-//# sourceMappingURL=create-category.dto.js.map
+], CreateProductVariantDto.prototype, "size", void 0);
+//# sourceMappingURL=create-productVariant.dto.js.map

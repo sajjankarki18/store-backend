@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const category_entity_1 = require("./entities/category.entity");
 const Category_repository_1 = require("./repositories/Category.repository");
+const status_enum_1 = require("../enums/status.enum");
 let CategoriesService = class CategoriesService {
     constructor(categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -62,6 +63,7 @@ let CategoriesService = class CategoriesService {
                 title: categoryDto.title,
                 description: categoryDto.description,
                 parent_id: categoryDto.parent_id,
+                status: categoryDto.status || status_enum_1.StatusEnum.Draft,
             });
             return await this.categoryRepository.save(category);
         }
@@ -81,7 +83,7 @@ let CategoriesService = class CategoriesService {
                 error: 'Bad request',
             });
         }
-        const new_limit = limit > 10 ? 10 : limit;
+        const new_limit = limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
         const [data, total] = await this.categoryRepository.findAndCount({
             skip: (page - 1) * new_limit,
             take: new_limit,
@@ -123,6 +125,7 @@ let CategoriesService = class CategoriesService {
                 description: categoryDto.description,
                 parent_id: categoryDto.parent_id,
                 image_url: categoryDto.image_url,
+                status: categoryDto.status,
             });
             return await this.categoryRepository.findOne({ where: { id } });
         }
