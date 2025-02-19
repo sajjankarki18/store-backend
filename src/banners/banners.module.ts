@@ -7,6 +7,7 @@ import { CategoriesModule } from 'src/categories/categories.module';
 import { ProductsModule } from '../products/products.module';
 import { Category } from '../categories/entities/category.entity';
 import { Product } from '../products/entities/product.entity';
+import { BannersControllers } from './banners.controller';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { Product } from '../products/entities/product.entity';
     forwardRef(() => CategoriesModule),
     forwardRef(() => ProductsModule),
   ],
-  controllers: [BannersAdminController],
+  controllers: [BannersAdminController, BannersControllers],
   providers: [BannersService],
 })
 export class BannersModule {}

@@ -2,19 +2,28 @@ import { Product } from './entities/product.entity';
 import { ProductRepository } from './repositories/product.repository';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { StatusEnum } from 'src/enums/status.enum';
 import { CreateProductVariantDto } from './dto/create-productVariant.dto';
 import { ProductVariant } from './entities/productVariant.entity';
 import { ProductVariantRepository } from './repositories/productVariant.repository';
 import { UpdateProductVariantDto } from './dto/update-productVariant.dto';
+import { CreateProductPricingDto } from './dto/create-productPricing.dto';
+import { ProductPricing } from './entities/productPricing.entity';
+import { ProductPricingRepository } from './repositories/productPricing.repository';
+import { UpdateProductPricingDto } from './dto/update-productPricing.dto';
 export declare class ProductsService {
     private readonly productsRepository;
     private readonly productsVariantRepository;
-    constructor(productsRepository: ProductRepository, productsVariantRepository: ProductVariantRepository);
+    private readonly productPricingRepository;
+    constructor(productsRepository: ProductRepository, productsVariantRepository: ProductVariantRepository, productPricingRepository: ProductPricingRepository);
+    validateProduct: (productId: string) => Promise<void>;
     createProduct(productDto: CreateProductDto): Promise<Product>;
     findProductById(id: string): Promise<Product>;
-    fetchAllProducts({ page, limit, }: {
+    fetchAllProducts({ page, limit, status, query, }: {
         page: number;
         limit: number;
+        status: StatusEnum;
+        query: string;
     }): Promise<{
         data: Product[];
         page: number;
@@ -34,6 +43,13 @@ export declare class ProductsService {
     getProductVariantById(variantId: string): Promise<ProductVariant>;
     updateProductVariant(id: string, productVariantDto: UpdateProductVariantDto): Promise<ProductVariant>;
     deleteProductVariant(id: string): Promise<{
+        id: string;
+        message: string;
+    }>;
+    createProductPricing(productPricingDto: CreateProductPricingDto): Promise<ProductPricing>;
+    getProductPricingById(id: string): Promise<ProductPricing>;
+    updateProductPricing(id: string, productPricingDto: UpdateProductPricingDto): Promise<ProductPricing>;
+    deleteProductPricing(id: string): Promise<{
         id: string;
         message: string;
     }>;

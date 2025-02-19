@@ -16,6 +16,7 @@ const categories_module_1 = require("../categories/categories.module");
 const products_module_1 = require("../products/products.module");
 const category_entity_1 = require("../categories/entities/category.entity");
 const product_entity_1 = require("../products/entities/product.entity");
+const banners_controller_1 = require("./banners.controller");
 let BannersModule = class BannersModule {
 };
 exports.BannersModule = BannersModule;
@@ -26,7 +27,7 @@ exports.BannersModule = BannersModule = __decorate([
             (0, common_1.forwardRef)(() => categories_module_1.CategoriesModule),
             (0, common_1.forwardRef)(() => products_module_1.ProductsModule),
         ],
-        controllers: [banners_admin_controller_1.BannersAdminController],
+        controllers: [banners_admin_controller_1.BannersAdminController, banners_controller_1.BannersControllers],
         providers: [banners_service_1.BannersService],
     })
 ], BannersModule);

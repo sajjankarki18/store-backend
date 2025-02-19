@@ -19,6 +19,10 @@ const create_product_dto_1 = require("./dto/create-product.dto");
 const update_product_dto_1 = require("./dto/update-product.dto");
 const create_productVariant_dto_1 = require("./dto/create-productVariant.dto");
 const update_productVariant_dto_1 = require("./dto/update-productVariant.dto");
+const create_productPricing_dto_1 = require("./dto/create-productPricing.dto");
+const update_productPricing_dto_1 = require("./dto/update-productPricing.dto");
+const status_enum_1 = require("../enums/status.enum");
+const swagger_1 = require("@nestjs/swagger");
 let ProductsAdminController = class ProductsAdminController {
     constructor(productsService) {
         this.productsService = productsService;
@@ -26,7 +30,7 @@ let ProductsAdminController = class ProductsAdminController {
     createProduct(productDto) {
         return this.productsService.createProduct(productDto);
     }
-    fetchAllProducts(page = 1, limit = 10) {
+    fetchAllProducts(page = 1, limit = 10, status, query) {
         if (!page || !limit) {
             throw new common_1.BadRequestException({
                 statusCode: common_1.HttpStatus.BAD_REQUEST,
@@ -34,7 +38,12 @@ let ProductsAdminController = class ProductsAdminController {
                 error: 'Bad Request',
             });
         }
-        return this.productsService.fetchAllProducts({ page, limit });
+        return this.productsService.fetchAllProducts({
+            page,
+            limit,
+            status,
+            query,
+        });
     }
     searchProduct(query) {
         return this.productsService.searchProduct(query);
@@ -57,9 +66,25 @@ let ProductsAdminController = class ProductsAdminController {
     deleteProductVariant(id) {
         return this.productsService.deleteProductVariant(id);
     }
+    createProductPricing(productPricingDto) {
+        return this.productsService.createProductPricing(productPricingDto);
+    }
+    getProductPricingById(id) {
+        return this.productsService.getProductPricingById(id);
+    }
+    updateProductPricing(id, productPricingDto) {
+        return this.productsService.updateProductPricing(id, productPricingDto);
+    }
+    deleteProductPricing(id) {
+        return this.productsService.deleteProductPricing(id);
+    }
 };
 exports.ProductsAdminController = ProductsAdminController;
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new Products' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Products created successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid input data' }),
+    (0, common_1.Post)(),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -67,14 +92,20 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "createProduct", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Find all Products' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Products fetched sucessfully' }),
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('status')),
+    __param(3, (0, common_1.Query)('q')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [Number, Number, String, String]),
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "fetchAllProducts", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Search a Products' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'fetched searched products' }),
     (0, common_1.Get)('/search'),
     __param(0, (0, common_1.Query)('q')),
     __metadata("design:type", Function),
@@ -82,6 +113,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "searchProduct", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Update a Products' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Products updated' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Products not found' }),
     (0, common_1.Put)('/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -90,6 +124,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "updateProduct", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a Products' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Products deleted' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Products not found' }),
     (0, common_1.Delete)('/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -125,7 +162,37 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "deleteProductVariant", null);
+__decorate([
+    (0, common_1.Post)('/pricing'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_productPricing_dto_1.CreateProductPricingDto]),
+    __metadata("design:returntype", void 0)
+], ProductsAdminController.prototype, "createProductPricing", null);
+__decorate([
+    (0, common_1.Get)('/pricing/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProductsAdminController.prototype, "getProductPricingById", null);
+__decorate([
+    (0, common_1.Put)('/pricing/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_productPricing_dto_1.UpdateProductPricingDto]),
+    __metadata("design:returntype", void 0)
+], ProductsAdminController.prototype, "updateProductPricing", null);
+__decorate([
+    (0, common_1.Delete)('/pricing/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProductsAdminController.prototype, "deleteProductPricing", null);
 exports.ProductsAdminController = ProductsAdminController = __decorate([
+    (0, swagger_1.ApiTags)('Admin Products'),
     (0, common_1.Controller)('/admin/products'),
     __metadata("design:paramtypes", [products_service_1.ProductsService])
 ], ProductsAdminController);

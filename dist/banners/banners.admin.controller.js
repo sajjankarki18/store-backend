@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const banners_service_1 = require("./banners.service");
 const create_banner_dto_1 = require("./dto/create-banner.dto");
 const update_banner_dto_1 = require("./dto/update-banner.dto");
+const swagger_1 = require("@nestjs/swagger");
 let BannersAdminController = class BannersAdminController {
     constructor(bannersService) {
         this.bannersService = bannersService;
@@ -39,6 +40,9 @@ let BannersAdminController = class BannersAdminController {
 };
 exports.BannersAdminController = BannersAdminController;
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new banner' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Banner created successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid input data' }),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -46,6 +50,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BannersAdminController.prototype, "createBanner", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Find banner by Id' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Banner found' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Banner not found' }),
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -53,12 +60,17 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BannersAdminController.prototype, "findBannerById", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Find all banner' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Banner fetched sucessfully' }),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], BannersAdminController.prototype, "fetchAllBanners", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Update a Banner' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Banner updated' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Banner not found' }),
     (0, common_1.Put)('/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -67,6 +79,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BannersAdminController.prototype, "updateBanner", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a banner' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Banner deleted' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Banner not found' }),
     (0, common_1.Delete)('/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -74,6 +89,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BannersAdminController.prototype, "deleteBanner", null);
 exports.BannersAdminController = BannersAdminController = __decorate([
+    (0, swagger_1.ApiTags)('Admin Banners'),
     (0, common_1.Controller)('/admin/banners'),
     __metadata("design:paramtypes", [banners_service_1.BannersService])
 ], BannersAdminController);

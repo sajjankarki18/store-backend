@@ -18,9 +18,13 @@ const typeorm_1 = require("@nestjs/typeorm");
 const category_entity_1 = require("./entities/category.entity");
 const Category_repository_1 = require("./repositories/Category.repository");
 const status_enum_1 = require("../enums/status.enum");
+const typeorm_2 = require("typeorm");
+const product_entity_1 = require("../products/entities/product.entity");
+const product_repository_1 = require("../products/repositories/product.repository");
 let CategoriesService = class CategoriesService {
-    constructor(categoryRepository) {
+    constructor(categoryRepository, productsRepository) {
         this.categoryRepository = categoryRepository;
+        this.productsRepository = productsRepository;
         this.validateCategoryUpdation = async (categoryDto) => {
             if (categoryDto.parent_id) {
                 const childCategory = await this.categoryRepository.findOne({
@@ -75,7 +79,67 @@ let CategoriesService = class CategoriesService {
             });
         }
     }
-    async fetchAllCategories({ page, limit, }) {
+    async fetchAllParentCategories() {
+        const parentCategories = await this.categoryRepository.find({
+            where: {
+                parent_id: (0, typeorm_2.IsNull)(),
+                status: status_enum_1.StatusEnum.Published,
+                is_active: true,
+            },
+        });
+        return {
+            data: parentCategories,
+        };
+    }
+    async fetchAllCategoriesWithChildProducts() {
+        const parentCategories = await this.categoryRepository.find({
+            where: {
+                parent_id: (0, typeorm_2.IsNull)(),
+                status: status_enum_1.StatusEnum.Published,
+                is_active: true,
+            },
+        });
+        const categoriesData = [];
+        for (const parentCategory of parentCategories) {
+            const childCategories = await this.categoryRepository.find({
+                where: {
+                    parent_id: parentCategory.id,
+                    status: status_enum_1.StatusEnum.Published,
+                    is_active: true,
+                },
+            });
+            const childrenData = [];
+            for (const childCategory of childCategories) {
+                const products = await this.productsRepository.find({
+                    where: {
+                        category_id: childCategory.id,
+                        status: status_enum_1.StatusEnum.Published,
+                        is_active: true,
+                    },
+                });
+                childrenData.push({
+                    title: childCategory.title,
+                    id: childCategory.id,
+                    products: products.map((product) => ({
+                        id: product.id,
+                        title: product.title,
+                        status: product.status,
+                    })),
+                });
+            }
+            const hashMore = childrenData.length > 5 ? true : false;
+            categoriesData.push({
+                title: parentCategory.title,
+                id: parentCategory.id,
+                children: childrenData,
+                hashMore: hashMore,
+            });
+        }
+        return {
+            data: categoriesData,
+        };
+    }
+    async fetchAllCategories({ page, limit, status, query, }) {
         if (isNaN(Number(page)) || isNaN(Number(limit)) || page < 0 || limit < 0) {
             throw new common_1.BadRequestException({
                 statusCode: common_1.HttpStatus.BAD_REQUEST,
@@ -85,6 +149,12 @@ let CategoriesService = class CategoriesService {
         }
         const new_limit = limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
         const [data, total] = await this.categoryRepository.findAndCount({
+            where: {
+                status: status.toLowerCase() === 'published'
+                    ? status_enum_1.StatusEnum.Published
+                    : status_enum_1.StatusEnum.Draft,
+                title: query ? (0, typeorm_2.ILike)(`%${query.trim()}%`) : null,
+            },
             skip: (page - 1) * new_limit,
             take: new_limit,
             order: { created_at: 'desc' },
@@ -189,6 +259,8 @@ exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
-    __metadata("design:paramtypes", [Category_repository_1.CategoryRepository])
+    __param(1, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
+    __metadata("design:paramtypes", [Category_repository_1.CategoryRepository,
+        product_repository_1.ProductRepository])
 ], CategoriesService);
 //# sourceMappingURL=categories.service.js.map

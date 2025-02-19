@@ -16,6 +16,10 @@ import { CreateProductVariantDto } from './dto/create-productVariant.dto';
 import { ProductVariant } from './entities/productVariant.entity';
 import { ProductVariantRepository } from './repositories/productVariant.repository';
 import { UpdateProductVariantDto } from './dto/update-productVariant.dto';
+import { CreateProductPricingDto } from './dto/create-productPricing.dto';
+import { ProductPricing } from './entities/productPricing.entity';
+import { ProductPricingRepository } from './repositories/productPricing.repository';
+import { UpdateProductPricingDto } from './dto/update-productPricing.dto';
 
 @Injectable()
 export class ProductsService {
@@ -24,7 +28,24 @@ export class ProductsService {
     private readonly productsRepository: ProductRepository,
     @InjectRepository(ProductVariant)
     private readonly productsVariantRepository: ProductVariantRepository,
+    @InjectRepository(ProductPricingRepository)
+    private readonly productPricingRepository: ProductPricingRepository,
   ) {}
+
+  validateProduct = async (productId: string) => {
+    const product = await this.productsRepository.findOne({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        error: `product id ${productId} not found`,
+      });
+    }
+  };
 
   async createProduct(productDto: CreateProductDto): Promise<Product> {
     try {
@@ -60,9 +81,13 @@ export class ProductsService {
   async fetchAllProducts({
     page,
     limit,
+    status,
+    query,
   }: {
     page: number;
     limit: number;
+    status: StatusEnum;
+    query: string;
   }): Promise<{ data: Product[]; page: number; limit: number; total: number }> {
     if (isNaN(Number(page)) || isNaN(Number(limit)) || page < 0 || limit < 0) {
       throw new BadRequestException({
@@ -76,6 +101,13 @@ export class ProductsService {
       limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
 
     const [data, total] = await this.productsRepository.findAndCount({
+      where: {
+        status:
+          status.toLowerCase() === 'published'
+            ? StatusEnum.Published
+            : StatusEnum.Draft,
+        title: ILike(`%${query.trim()}%`),
+      },
       skip: (page - 1) * new_limit,
       take: new_limit,
       order: { created_at: 'desc' },
@@ -171,6 +203,8 @@ export class ProductsService {
 
     try {
       await this.productsRepository.softDelete(id);
+      await this.productPricingRepository.delete({ product_id: id });
+      await this.productsVariantRepository.delete({ product_id: id });
 
       return {
         id: `${id}`,
@@ -190,21 +224,7 @@ export class ProductsService {
     productVariantDto: CreateProductVariantDto,
   ): Promise<ProductVariant> {
     //before creating the product-variant check if the product_id exists in the product database
-    const product = await this.productsRepository.findOne({
-      where: {
-        id: productVariantDto.product_id,
-      },
-    });
-
-    if (!product) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: [
-          `variant could not be created, product_id ${productVariantDto.product_id} does not exists`,
-        ],
-        error: 'Not Found',
-      });
-    }
+    await this.validateProduct(productVariantDto.product_id);
     try {
       const productVariant = this.productsVariantRepository.create({
         product_id: productVariantDto.product_id,
@@ -306,6 +326,123 @@ export class ProductsService {
     return {
       id: `${id}`,
       message: 'product variant has been deleted',
+    };
+  }
+
+  /* pricing services */
+  async createProductPricing(
+    productPricingDto: CreateProductPricingDto,
+  ): Promise<ProductPricing> {
+    await this.validateProduct(productPricingDto.product_id);
+    try {
+      const productPrice = this.productPricingRepository.create({
+        product_id: productPricingDto.product_id,
+        country_code: productPricingDto.country_code,
+        currency: productPricingDto.currency,
+        price: productPricingDto.price,
+        crossed_price: productPricingDto.crossed_price,
+        selling_price: productPricingDto.selling_price,
+      });
+
+      console.log(productPrice);
+
+      return await this.productPricingRepository.save(productPrice);
+    } catch (error) {
+      throw new InternalServerErrorException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: [
+          'some error occured while creating pricing for the product',
+          error,
+        ],
+        error: 'Internal Server',
+      });
+    }
+  }
+
+  async getProductPricingById(id: string): Promise<ProductPricing> {
+    const productPricing = await this.productPricingRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!productPricing) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: [`product pricing not found`],
+        error: 'Not Found',
+      });
+    }
+
+    return await this.productPricingRepository.findOne({
+      where: { id: id },
+    });
+  }
+
+  async updateProductPricing(
+    id: string,
+    productPricingDto: UpdateProductPricingDto,
+  ): Promise<ProductPricing> {
+    const productPricing = await this.productPricingRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!productPricing) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: [`product pricing not found`],
+        error: 'Not Found',
+      });
+    }
+
+    try {
+      await this.productPricingRepository.update(
+        { id },
+        {
+          product_id: productPricingDto.product_id,
+          country_code: productPricingDto.country_code,
+          currency: productPricingDto.currency,
+          price: productPricingDto.price,
+          selling_price: productPricingDto.selling_price,
+          crossed_price: productPricingDto.selling_price,
+        },
+      );
+
+      return await this.productPricingRepository.findOne({ where: { id } });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: [
+          'some error occured while creating a updating the pricing for the product',
+          error,
+        ],
+        error: 'Internal server error',
+      });
+    }
+  }
+
+  async deleteProductPricing(
+    id: string,
+  ): Promise<{ id: string; message: string }> {
+    const productPricing = await this.productPricingRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!productPricing) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: [`product pricing not found`],
+        error: 'Not Found',
+      });
+    }
+
+    await this.productPricingRepository.delete(id);
+
+    return {
+      id: `${id}`,
+      message: 'product pricing has been deleted',
     };
   }
 }

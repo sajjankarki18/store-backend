@@ -22,6 +22,7 @@ const product_entity_1 = require("../products/entities/product.entity");
 const product_repository_1 = require("../products/repositories/product.repository");
 const category_entity_1 = require("../categories/entities/category.entity");
 const Category_repository_1 = require("../categories/repositories/Category.repository");
+const status_enum_1 = require("../enums/status.enum");
 const banners_limit = parseInt(process.env.BANNERS_LIMIT) || 5;
 let BannersService = class BannersService {
     constructor(bannerRepository, productsRepository, categoriesRepository) {
@@ -61,17 +62,24 @@ let BannersService = class BannersService {
                 }
             }
         };
+        this.limitBannersUpdation = async () => {
+            const publishedBanners = await this.bannerRepository.find({
+                where: {
+                    status: status_enum_1.StatusEnum.Published,
+                },
+            });
+            if (publishedBanners.length >= banners_limit) {
+                throw new common_1.ConflictException({
+                    statusCode: common_1.HttpStatus.CONFLICT,
+                    message: ['banners limit exeeded'],
+                    error: 'Conflict',
+                });
+            }
+        };
     }
     async createBanner(bannerDto) {
         await this.validateRedirects(bannerDto.redirect_id, bannerDto.redirect_type);
-        const banners = await this.bannerRepository.count();
-        if (banners >= banners_limit) {
-            throw new common_1.ConflictException({
-                statusCode: common_1.HttpStatus.CONFLICT,
-                message: ['banners limit exeeded'],
-                error: 'Conflict',
-            });
-        }
+        await this.limitBannersUpdation();
         try {
             const banner = this.bannerRepository.create({
                 title: bannerDto.title,
@@ -108,8 +116,62 @@ let BannersService = class BannersService {
             data: banners,
         };
     }
+    async fetchAllBannersFE() {
+        const banners = await this.bannerRepository.find({
+            where: {
+                status: status_enum_1.StatusEnum.Published,
+                is_active: true,
+            },
+        });
+        return {
+            data: banners,
+        };
+    }
+    async fetchBannersWithRedirects() {
+        const bannersData = await this.bannerRepository.find();
+        const bannersDataRedirects = [];
+        for (const banner of bannersData) {
+            let redirects = null;
+            if (banner.redirect_type === redirectTypes_enum_1.RedirectTypeEnum.Category) {
+                const category = await this.categoriesRepository.findOne({
+                    where: {
+                        id: banner.redirect_id,
+                        status: status_enum_1.StatusEnum.Published,
+                        is_active: true,
+                    },
+                });
+                redirects = category
+                    ? { title: category.title, id: category.id }
+                    : { title: null, id: null };
+            }
+            else if (banner.redirect_type === redirectTypes_enum_1.RedirectTypeEnum.Product) {
+                const product = await this.productsRepository.findOne({
+                    where: {
+                        id: banner.redirect_id,
+                        status: status_enum_1.StatusEnum.Published,
+                        is_active: true,
+                    },
+                });
+                redirects = product
+                    ? { title: product.title, id: product.id }
+                    : { title: null, id: null };
+            }
+            bannersDataRedirects.push({
+                title: banner.title,
+                id: banner.id,
+                redirect_id: banner.redirect_id,
+                redirect_type: banner.redirect_type,
+                image_url: banner.image_url,
+                redirects: redirects,
+            });
+        }
+        return {
+            data: bannersDataRedirects,
+        };
+    }
     async updateBanner(id, bannerDto) {
         await this.validateRedirects(bannerDto.redirect_id, bannerDto.redirect_type);
+        await this.limitBannersUpdation();
         const banner = await this.bannerRepository.findOne({ where: { id } });
         if (!banner) {
             throw new common_1.NotFoundException({

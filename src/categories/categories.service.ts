@@ -12,12 +12,17 @@ import { CategoryRepository } from './repositories/Category.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { StatusEnum } from 'src/enums/status.enum';
+import { ILike, IsNull } from 'typeorm';
+import { Product } from '../products/entities/product.entity';
+import { ProductRepository } from '../products/repositories/product.repository';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: CategoryRepository,
+    @InjectRepository(Product)
+    private readonly productsRepository: ProductRepository,
   ) {}
 
   validateCategoryUpdation = async (
@@ -81,13 +86,90 @@ export class CategoriesService {
     }
   }
 
+  /* fetch parent categories to frontend */
+  async fetchAllParentCategories(): Promise<{ data: Category[] }> {
+    const parentCategories = await this.categoryRepository.find({
+      where: {
+        parent_id: IsNull(),
+        status: StatusEnum.Published,
+        is_active: true,
+      },
+    });
+
+    return {
+      data: parentCategories,
+    };
+  }
+
+  /* display the categorues with the products related to the child categories */
+  async fetchAllCategoriesWithChildProducts(): Promise<{ data: Category[] }> {
+    const parentCategories = await this.categoryRepository.find({
+      where: {
+        parent_id: IsNull(),
+        status: StatusEnum.Published,
+        is_active: true,
+      },
+    });
+
+    const categoriesData: any[] = [];
+
+    for (const parentCategory of parentCategories) {
+      const childCategories = await this.categoryRepository.find({
+        where: {
+          parent_id: parentCategory.id,
+          status: StatusEnum.Published,
+          is_active: true,
+        },
+      });
+
+      const childrenData: any[] = [];
+
+      for (const childCategory of childCategories) {
+        const products = await this.productsRepository.find({
+          where: {
+            category_id: childCategory.id,
+            status: StatusEnum.Published,
+            is_active: true,
+          },
+        });
+
+        childrenData.push({
+          title: childCategory.title,
+          id: childCategory.id,
+          products: products.map((product) => ({
+            id: product.id,
+            title: product.title,
+            status: product.status,
+          })),
+        });
+      }
+
+      const hashMore: boolean = childrenData.length > 5 ? true : false;
+
+      categoriesData.push({
+        title: parentCategory.title,
+        id: parentCategory.id,
+        children: childrenData,
+        hashMore: hashMore,
+      });
+    }
+
+    return {
+      data: categoriesData,
+    };
+  }
+
   //fetch all categories with pagination feature,
   async fetchAllCategories({
     page,
     limit,
+    status,
+    query,
   }: {
     page: number;
     limit: number;
+    status: StatusEnum;
+    query: string;
   }): Promise<{
     data: Category[];
     page: number;
@@ -106,6 +188,13 @@ export class CategoriesService {
       limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
 
     const [data, total] = await this.categoryRepository.findAndCount({
+      where: {
+        status:
+          status.toLowerCase() === 'published'
+            ? StatusEnum.Published
+            : StatusEnum.Draft,
+        title: query ? ILike(`%${query.trim()}%`) : null,
+      },
       skip: (page - 1) * new_limit,
       take: new_limit,
       order: { created_at: 'desc' },

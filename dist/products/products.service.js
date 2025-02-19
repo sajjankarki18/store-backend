@@ -21,10 +21,25 @@ const status_enum_1 = require("../enums/status.enum");
 const typeorm_2 = require("typeorm");
 const productVariant_entity_1 = require("./entities/productVariant.entity");
 const productVariant_repository_1 = require("./repositories/productVariant.repository");
+const productPricing_repository_1 = require("./repositories/productPricing.repository");
 let ProductsService = class ProductsService {
-    constructor(productsRepository, productsVariantRepository) {
+    constructor(productsRepository, productsVariantRepository, productPricingRepository) {
         this.productsRepository = productsRepository;
         this.productsVariantRepository = productsVariantRepository;
+        this.productPricingRepository = productPricingRepository;
+        this.validateProduct = async (productId) => {
+            const product = await this.productsRepository.findOne({
+                where: {
+                    id: productId,
+                },
+            });
+            if (!product) {
+                throw new common_1.NotFoundException({
+                    statusCode: common_1.HttpStatus.NOT_FOUND,
+                    error: `product id ${productId} not found`,
+                });
+            }
+        };
     }
     async createProduct(productDto) {
         try {
@@ -55,7 +70,7 @@ let ProductsService = class ProductsService {
         }
         return product;
     }
-    async fetchAllProducts({ page, limit, }) {
+    async fetchAllProducts({ page, limit, status, query, }) {
         if (isNaN(Number(page)) || isNaN(Number(limit)) || page < 0 || limit < 0) {
             throw new common_1.BadRequestException({
                 statusCode: common_1.HttpStatus.BAD_REQUEST,
@@ -65,6 +80,12 @@ let ProductsService = class ProductsService {
         }
         const new_limit = limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
         const [data, total] = await this.productsRepository.findAndCount({
+            where: {
+                status: status.toLowerCase() === 'published'
+                    ? status_enum_1.StatusEnum.Published
+                    : status_enum_1.StatusEnum.Draft,
+                title: (0, typeorm_2.ILike)(`%${query.trim()}%`),
+            },
             skip: (page - 1) * new_limit,
             take: new_limit,
             order: { created_at: 'desc' },
@@ -156,20 +177,7 @@ let ProductsService = class ProductsService {
         }
     }
     async createProductVariant(productVariantDto) {
-        const product = await this.productsRepository.findOne({
-            where: {
-                id: productVariantDto.product_id,
-            },
-        });
-        if (!product) {
-            throw new common_1.NotFoundException({
-                statusCode: common_1.HttpStatus.NOT_FOUND,
-                message: [
-                    `variant could not be created, product_id ${productVariantDto.product_id} does not exists`,
-                ],
-                error: 'Not Found',
-            });
-        }
+        await this.validateProduct(productVariantDto.product_id);
         try {
             const productVariant = this.productsVariantRepository.create({
                 product_id: productVariantDto.product_id,
@@ -255,13 +263,109 @@ let ProductsService = class ProductsService {
             message: 'product variant has been deleted',
         };
     }
+    async createProductPricing(productPricingDto) {
+        await this.validateProduct(productPricingDto.product_id);
+        try {
+            const productPrice = this.productPricingRepository.create({
+                product_id: productPricingDto.product_id,
+                country_code: productPricingDto.country_code,
+                currency: productPricingDto.currency,
+                price: productPricingDto.price,
+                crossed_price: productPricingDto.crossed_price,
+                selling_price: productPricingDto.selling_price,
+            });
+            console.log(productPrice);
+            return await this.productPricingRepository.save(productPrice);
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                message: [
+                    'some error occured while creating pricing for the product',
+                    error,
+                ],
+                error: 'Internal Server',
+            });
+        }
+    }
+    async getProductPricingById(id) {
+        const productPricing = await this.productPricingRepository.findOne({
+            where: { id: id },
+        });
+        if (!productPricing) {
+            throw new common_1.NotFoundException({
+                statusCode: common_1.HttpStatus.NOT_FOUND,
+                message: [`product pricing not found`],
+                error: 'Not Found',
+            });
+        }
+        return await this.productPricingRepository.findOne({
+            where: { id: id },
+        });
+    }
+    async updateProductPricing(id, productPricingDto) {
+        const productPricing = await this.productPricingRepository.findOne({
+            where: {
+                id,
+            },
+        });
+        if (!productPricing) {
+            throw new common_1.NotFoundException({
+                statusCode: common_1.HttpStatus.NOT_FOUND,
+                message: [`product pricing not found`],
+                error: 'Not Found',
+            });
+        }
+        try {
+            await this.productPricingRepository.update({ id }, {
+                product_id: productPricingDto.product_id,
+                country_code: productPricingDto.country_code,
+                currency: productPricingDto.currency,
+                price: productPricingDto.price,
+                selling_price: productPricingDto.selling_price,
+                crossed_price: productPricingDto.selling_price,
+            });
+            return await this.productPricingRepository.findOne({ where: { id } });
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                message: [
+                    'some error occured while creating a updating the pricing for the product',
+                    error,
+                ],
+                error: 'Internal server error',
+            });
+        }
+    }
+    async deleteProductPricing(id) {
+        const productPricing = await this.productPricingRepository.findOne({
+            where: {
+                id: id,
+            },
+        });
+        if (!productPricing) {
+            throw new common_1.NotFoundException({
+                statusCode: common_1.HttpStatus.NOT_FOUND,
+                message: [`product pricing not found`],
+                error: 'Not Found',
+            });
+        }
+        await this.productPricingRepository.delete(id);
+        return {
+            id: `${id}`,
+            message: 'product pricing has been deleted',
+        };
+    }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
     __param(1, (0, typeorm_1.InjectRepository)(productVariant_entity_1.ProductVariant)),
+    __param(2, (0, typeorm_1.InjectRepository)(productPricing_repository_1.ProductPricingRepository)),
     __metadata("design:paramtypes", [product_repository_1.ProductRepository,
-        productVariant_repository_1.ProductVariantRepository])
+        productVariant_repository_1.ProductVariantRepository,
+        productPricing_repository_1.ProductPricingRepository])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map
