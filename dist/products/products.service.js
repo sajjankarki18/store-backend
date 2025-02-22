@@ -163,6 +163,7 @@ let ProductsService = class ProductsService {
         }
         try {
             await this.productsRepository.softDelete(id);
+            await this.productsVariantRepository.delete({ product_id: id });
             return {
                 id: `${id}`,
                 message: 'product has been deleted',
@@ -258,16 +259,27 @@ let ProductsService = class ProductsService {
             });
         }
         await this.productsVariantRepository.delete(id);
+        await this.productPricingRepository.delete({ variant_id: id });
         return {
             id: `${id}`,
             message: 'product variant has been deleted',
         };
     }
     async createProductPricing(productPricingDto) {
-        await this.validateProduct(productPricingDto.product_id);
+        const variant = await this.productsVariantRepository.findOne({
+            where: {
+                id: productPricingDto.variant_id,
+            },
+        });
+        if (!variant) {
+            throw new common_1.NotFoundException({
+                statusCode: common_1.HttpStatus.NOT_FOUND,
+                error: `variant id ${variant.id} not found`,
+            });
+        }
         try {
             const productPrice = this.productPricingRepository.create({
-                product_id: productPricingDto.product_id,
+                variant_id: productPricingDto.variant_id,
                 country_code: productPricingDto.country_code,
                 currency: productPricingDto.currency,
                 price: productPricingDto.price,
@@ -318,7 +330,7 @@ let ProductsService = class ProductsService {
         }
         try {
             await this.productPricingRepository.update({ id }, {
-                product_id: productPricingDto.product_id,
+                variant_id: productPricingDto.variant_id,
                 country_code: productPricingDto.country_code,
                 currency: productPricingDto.currency,
                 price: productPricingDto.price,

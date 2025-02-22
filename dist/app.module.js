@@ -15,9 +15,17 @@ const typeorm_1 = require("@nestjs/typeorm");
 const banners_module_1 = require("./banners/banners.module");
 const products_module_1 = require("./products/products.module");
 const categories_module_1 = require("./categories/categories.module");
-const middlewares_module_1 = require("./middlewares/middlewares.module");
-const auth_module_1 = require("./auth/auth.module");
+const auth_users_module_1 = require("./auth-users/auth-users.module");
+const authentication_middleware_1 = require("./middlewares/authentication.middleware");
+const jwt_1 = require("@nestjs/jwt");
+const auth_middleware_1 = require("./middlewares/auth-middleware");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(authentication_middleware_1.AuthenticationMiddleware)
+            .exclude('/admin/auth_user/signin')
+            .forRoutes('/admin');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
@@ -34,11 +42,12 @@ exports.AppModule = AppModule = __decorate([
                 autoLoadEntities: true,
                 synchronize: true,
             }),
+            jwt_1.JwtModule.register({}),
             banners_module_1.BannersModule,
             products_module_1.ProductsModule,
             categories_module_1.CategoriesModule,
-            middlewares_module_1.MiddlewaresModule,
-            auth_module_1.AuthModule,
+            auth_users_module_1.AuthUsersModule,
+            auth_middleware_1.AuthModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -6,8 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BannersModule } from './banners/banners.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
-import { MiddlewaresModule } from './middlewares/middlewares.module';
-import { AuthModule } from './auth/auth.module';
+import { AuthUsersModule } from './auth-users/auth-users.module';
+import { AuthenticationMiddleware } from './middlewares/authentication.middleware';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './middlewares/auth-middleware';
 
 @Module({
   imports: [
@@ -22,13 +24,21 @@ import { AuthModule } from './auth/auth.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    JwtModule.register({}),
     BannersModule,
     ProductsModule,
     CategoriesModule,
-    MiddlewaresModule,
+    AuthUsersModule,
     AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthenticationMiddleware)
+      .exclude('/admin/auth_user/signin')
+      .forRoutes('/admin');
+  }
+}

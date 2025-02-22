@@ -1,7 +1,7 @@
 import { CurrencyEnum } from '../../enums/currency.enum';
 export declare class ProductPricing {
     id: string;
-    product_id: string;
+    variant_id: string;
     country_code: string;
     currency: CurrencyEnum;
     price: number;

@@ -18,14 +18,14 @@ class CreateProductPricingDto {
 exports.CreateProductPricingDto = CreateProductPricingDto;
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: 'Each product variant must be linked to a specific product_id from the product table.',
+        description: 'Each product variant must be linked to a specific variant from the product table.',
         example: '467aaf30-02b1-42c3-b0aa-91f25020e4ca',
         type: String,
     }),
     (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateProductPricingDto.prototype, "product_id", void 0);
+], CreateProductPricingDto.prototype, "variant_id", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Country code in ISO 3166-1 alpha-2 format (e.g., US, IN, UK).',

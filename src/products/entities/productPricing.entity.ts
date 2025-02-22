@@ -14,7 +14,7 @@ export class ProductPricing {
   id: string;
 
   @Column({ nullable: true })
-  product_id: string;
+  variant_id: string;
 
   @Column({ nullable: true })
   country_code: string;

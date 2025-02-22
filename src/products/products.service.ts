@@ -203,7 +203,6 @@ export class ProductsService {
 
     try {
       await this.productsRepository.softDelete(id);
-      await this.productPricingRepository.delete({ product_id: id });
       await this.productsVariantRepository.delete({ product_id: id });
 
       return {
@@ -322,6 +321,7 @@ export class ProductsService {
     }
 
     await this.productsVariantRepository.delete(id);
+    await this.productPricingRepository.delete({ variant_id: id });
 
     return {
       id: `${id}`,
@@ -333,10 +333,22 @@ export class ProductsService {
   async createProductPricing(
     productPricingDto: CreateProductPricingDto,
   ): Promise<ProductPricing> {
-    await this.validateProduct(productPricingDto.product_id);
+    /* validate product_pricing variant_id */
+    const variant = await this.productsVariantRepository.findOne({
+      where: {
+        id: productPricingDto.variant_id,
+      },
+    });
+
+    if (!variant) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        error: `variant id ${variant.id} not found`,
+      });
+    }
     try {
       const productPrice = this.productPricingRepository.create({
-        product_id: productPricingDto.product_id,
+        variant_id: productPricingDto.variant_id,
         country_code: productPricingDto.country_code,
         currency: productPricingDto.currency,
         price: productPricingDto.price,
@@ -399,7 +411,7 @@ export class ProductsService {
       await this.productPricingRepository.update(
         { id },
         {
-          product_id: productPricingDto.product_id,
+          variant_id: productPricingDto.variant_id,
           country_code: productPricingDto.country_code,
           currency: productPricingDto.currency,
           price: productPricingDto.price,

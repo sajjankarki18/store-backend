@@ -11,13 +11,13 @@ import { CurrencyEnum } from 'src/enums/currency.enum';
 export class CreateProductPricingDto {
   @ApiProperty({
     description:
-      'Each product variant must be linked to a specific product_id from the product table.',
+      'Each product variant must be linked to a specific variant from the product table.',
     example: '467aaf30-02b1-42c3-b0aa-91f25020e4ca',
     type: String,
   })
   @IsUUID()
   @IsOptional()
-  product_id: string;
+  variant_id: string;
 
   @ApiProperty({
     description:
