@@ -8,18 +8,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthUsersModule = void 0;
 const common_1 = require("@nestjs/common");
-const auth_users_controller_1 = require("./auth-users.controller");
 const auth_users_service_1 = require("./auth-users.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const auth_user_entity_1 = require("./entities/auth-user.entity");
 const jwt_1 = require("@nestjs/jwt");
+const auth_userRole_entity_1 = require("./entities/auth-userRole.entity");
+const auth_userRoleType_entity_1 = require("./entities/auth-userRoleType.entity");
+const auth_users_admin_controller_1 = require("./auth-users.admin.controller");
 let AuthUsersModule = class AuthUsersModule {
 };
 exports.AuthUsersModule = AuthUsersModule;
 exports.AuthUsersModule = AuthUsersModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([auth_user_entity_1.AuthUser]), jwt_1.JwtModule.register({})],
-        controllers: [auth_users_controller_1.AuthUserController],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([auth_user_entity_1.AuthUser, auth_userRole_entity_1.AuthUserRole, auth_userRoleType_entity_1.AuthUserRoleType]),
+            jwt_1.JwtModule.register({}),
+        ],
+        controllers: [auth_users_admin_controller_1.AuthUserAdminController],
         providers: [auth_users_service_1.AuthUserService],
     })
 ], AuthUsersModule);

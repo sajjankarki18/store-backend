@@ -54,6 +54,10 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], AuthUser.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], AuthUser.prototype, "role_id", void 0);
 exports.AuthUser = AuthUser = __decorate([
     (0, typeorm_1.Entity)()
 ], AuthUser);

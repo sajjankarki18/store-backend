@@ -38,4 +38,10 @@ export class AuthUser {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  // @ManyToOne(() => AuthUserRole, (auth_user_role) => auth_user_role.auth_user)
+  // auth_user_role: AuthUserRole;
+
+  @Column({ nullable: true })
+  role_id: string;
 }

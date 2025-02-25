@@ -24,6 +24,7 @@ let AppModule = class AppModule {
         consumer
             .apply(authentication_middleware_1.AuthenticationMiddleware)
             .exclude('/admin/auth_user/signin')
+            .exclude('admin/auth_user/signup')
             .forRoutes('/admin');
     }
 };

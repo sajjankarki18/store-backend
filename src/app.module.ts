@@ -39,6 +39,7 @@ export class AppModule {
     consumer
       .apply(AuthenticationMiddleware)
       .exclude('/admin/auth_user/signin')
+      .exclude('admin/auth_user/signup')
       .forRoutes('/admin');
   }
 }
