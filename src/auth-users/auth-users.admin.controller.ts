@@ -39,6 +39,12 @@ export class AuthUserAdminController {
     return this.authUserService.signin(signinUserDto);
   }
 
+  /* show the logged in user details */
+  @Get('/me')
+  showUserData(@Req() req) {
+    return this.authUserService.showUserData(req);
+  }
+
   @Get('/all-users')
   getAllUsers(
     @Query('page') page: number = 1,
@@ -50,12 +56,6 @@ export class AuthUserAdminController {
   @Get('/:id')
   getUserById(@Param('id') id: string) {
     return this.authUserService.getUserById(id);
-  }
-
-  /* show the logged in user details */
-  @Get('/me')
-  showUserData(@Req() req) {
-    return this.authUserService.showUserData(req);
   }
 
   @Post('/:userId/user-role')

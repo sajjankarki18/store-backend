@@ -11,7 +11,7 @@ import { ProductRepository } from './repositories/product.repository';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { StatusEnum } from 'src/enums/status.enum';
-import { ILike } from 'typeorm';
+import { ILike, IsNull, Not } from 'typeorm';
 import { CreateProductVariantDto } from './dto/create-productVariant.dto';
 import { ProductVariant } from './entities/productVariant.entity';
 import { ProductVariantRepository } from './repositories/productVariant.repository';
@@ -20,6 +20,8 @@ import { CreateProductPricingDto } from './dto/create-productPricing.dto';
 import { ProductPricing } from './entities/productPricing.entity';
 import { ProductPricingRepository } from './repositories/productPricing.repository';
 import { UpdateProductPricingDto } from './dto/update-productPricing.dto';
+import { Category } from '../categories/entities/category.entity';
+import { CategoryRepository } from 'src/categories/repositories/Category.repository';
 
 @Injectable()
 export class ProductsService {
@@ -30,6 +32,8 @@ export class ProductsService {
     private readonly productsVariantRepository: ProductVariantRepository,
     @InjectRepository(ProductPricingRepository)
     private readonly productPricingRepository: ProductPricingRepository,
+    @InjectRepository(Category)
+    private readonly categoriesRepository: CategoryRepository,
   ) {}
 
   validateProduct = async (productId: string) => {
@@ -118,6 +122,70 @@ export class ProductsService {
       page,
       limit: new_limit,
       total,
+    };
+  }
+
+  /* fetch products for front-end */
+  async fetchProductsData(): Promise<{ data: Product[] }> {
+    const products = await this.productsRepository.find({
+      where: {
+        status: StatusEnum.Published,
+        category_id: Not(IsNull()),
+      },
+    });
+    const productsData: any[] = [];
+
+    for (const product of products) {
+      const productVariantsData: any[] = [];
+
+      const productVariants = await this.productsVariantRepository.find({
+        where: {
+          product_id: product.id,
+        },
+      });
+
+      for (const productVariant of productVariants) {
+        const productPricing = await this.productPricingRepository.find({
+          where: {
+            variant_id: productVariant.id,
+          },
+        });
+
+        productVariantsData.push({
+          id: productVariant.id,
+          color: productVariant.color,
+          size: productVariant.size,
+          in_stock: productVariant.in_stock,
+          pricing: productPricing.map((pricing) => ({
+            id: pricing.id,
+            price: pricing.price,
+            selling_price: pricing.selling_price,
+            crossed_price: pricing.crossed_price,
+          })),
+        });
+      }
+
+      const categoriesData = await this.categoriesRepository.find({
+        where: {
+          id: product.category_id,
+        },
+      });
+
+      productsData.push({
+        id: product.id,
+        title: product.title,
+        description: product.description,
+        status: product.status,
+        variants: productVariantsData,
+        category: categoriesData.map((category) => ({
+          id: category.id,
+          title: category.title,
+        })),
+      });
+    }
+
+    return {
+      data: productsData,
     };
   }
 

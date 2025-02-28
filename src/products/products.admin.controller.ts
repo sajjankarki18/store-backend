@@ -106,17 +106,17 @@ export class ProductsAdminController {
   }
 
   /* product pricing field */
-  @Post('/pricing')
+  @Post('/product-pricing')
   createProductPricing(@Body() productPricingDto: CreateProductPricingDto) {
     return this.productsService.createProductPricing(productPricingDto);
   }
 
-  @Get('/pricing/:id')
+  @Get('/product-pricing/:id')
   getProductPricingById(@Param('id') id: string) {
     return this.productsService.getProductPricingById(id);
   }
 
-  @Put('/pricing/:id')
+  @Put('/product-pricing/:id')
   updateProductPricing(
     @Param('id') id: string,
     @Body() productPricingDto: UpdateProductPricingDto,
@@ -124,7 +124,7 @@ export class ProductsAdminController {
     return this.productsService.updateProductPricing(id, productPricingDto);
   }
 
-  @Delete('/pricing/:id')
+  @Delete('/product-pricing/:id')
   deleteProductPricing(@Param('id') id: string) {
     return this.productsService.deleteProductPricing(id);
   }

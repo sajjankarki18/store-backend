@@ -22,11 +22,14 @@ const typeorm_2 = require("typeorm");
 const productVariant_entity_1 = require("./entities/productVariant.entity");
 const productVariant_repository_1 = require("./repositories/productVariant.repository");
 const productPricing_repository_1 = require("./repositories/productPricing.repository");
+const category_entity_1 = require("../categories/entities/category.entity");
+const Category_repository_1 = require("../categories/repositories/Category.repository");
 let ProductsService = class ProductsService {
-    constructor(productsRepository, productsVariantRepository, productPricingRepository) {
+    constructor(productsRepository, productsVariantRepository, productPricingRepository, categoriesRepository) {
         this.productsRepository = productsRepository;
         this.productsVariantRepository = productsVariantRepository;
         this.productPricingRepository = productPricingRepository;
+        this.categoriesRepository = categoriesRepository;
         this.validateProduct = async (productId) => {
             const product = await this.productsRepository.findOne({
                 where: {
@@ -95,6 +98,61 @@ let ProductsService = class ProductsService {
             page,
             limit: new_limit,
             total,
+        };
+    }
+    async fetchProductsData() {
+        const products = await this.productsRepository.find({
+            where: {
+                status: status_enum_1.StatusEnum.Published,
+                category_id: (0, typeorm_2.Not)((0, typeorm_2.IsNull)()),
+            },
+        });
+        const productsData = [];
+        for (const product of products) {
+            const productVariantsData = [];
+            const productVariants = await this.productsVariantRepository.find({
+                where: {
+                    product_id: product.id,
+                },
+            });
+            for (const productVariant of productVariants) {
+                const productPricing = await this.productPricingRepository.find({
+                    where: {
+                        variant_id: productVariant.id,
+                    },
+                });
+                productVariantsData.push({
+                    id: productVariant.id,
+                    color: productVariant.color,
+                    size: productVariant.size,
+                    in_stock: productVariant.in_stock,
+                    pricing: productPricing.map((pricing) => ({
+                        id: pricing.id,
+                        price: pricing.price,
+                        selling_price: pricing.selling_price,
+                        crossed_price: pricing.crossed_price,
+                    })),
+                });
+            }
+            const categoriesData = await this.categoriesRepository.find({
+                where: {
+                    id: product.category_id,
+                },
+            });
+            productsData.push({
+                id: product.id,
+                title: product.title,
+                description: product.description,
+                status: product.status,
+                variants: productVariantsData,
+                category: categoriesData.map((category) => ({
+                    id: category.id,
+                    title: category.title,
+                })),
+            });
+        }
+        return {
+            data: productsData,
         };
     }
     async searchProduct(query) {
@@ -376,8 +434,10 @@ exports.ProductsService = ProductsService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
     __param(1, (0, typeorm_1.InjectRepository)(productVariant_entity_1.ProductVariant)),
     __param(2, (0, typeorm_1.InjectRepository)(productPricing_repository_1.ProductPricingRepository)),
+    __param(3, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __metadata("design:paramtypes", [product_repository_1.ProductRepository,
         productVariant_repository_1.ProductVariantRepository,
-        productPricing_repository_1.ProductPricingRepository])
+        productPricing_repository_1.ProductPricingRepository,
+        Category_repository_1.CategoryRepository])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

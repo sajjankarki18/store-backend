@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AuthUserRole } from './auth-userRole.entity';
 
 @Entity()
 export class AuthUser {
@@ -39,8 +42,9 @@ export class AuthUser {
   @UpdateDateColumn()
   updated_at: Date;
 
-  // @ManyToOne(() => AuthUserRole, (auth_user_role) => auth_user_role.auth_user)
-  // auth_user_role: AuthUserRole;
+  @ManyToOne(() => AuthUserRole, (auth_user_role) => auth_user_role.auth_user)
+  @JoinColumn({ name: 'role_id' })
+  auth_user_role: AuthUserRole;
 
   @Column({ nullable: true })
   role_id: string;

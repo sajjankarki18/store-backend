@@ -16,15 +16,22 @@ const product_repository_1 = require("./repositories/product.repository");
 const productVariant_entity_1 = require("./entities/productVariant.entity");
 const productPricing_entity_1 = require("./entities/productPricing.entity");
 const productPricing_repository_1 = require("./repositories/productPricing.repository");
+const products_controller_1 = require("./products.controller");
+const category_entity_1 = require("../categories/entities/category.entity");
 let ProductsModule = class ProductsModule {
 };
 exports.ProductsModule = ProductsModule;
 exports.ProductsModule = ProductsModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([product_entity_1.Product, productVariant_entity_1.ProductVariant, productPricing_entity_1.ProductPricing]),
+            typeorm_1.TypeOrmModule.forFeature([
+                product_entity_1.Product,
+                productVariant_entity_1.ProductVariant,
+                productPricing_entity_1.ProductPricing,
+                category_entity_1.Category,
+            ]),
         ],
-        controllers: [products_admin_controller_1.ProductsAdminController],
+        controllers: [products_admin_controller_1.ProductsAdminController, products_controller_1.ProductsController],
         providers: [products_service_1.ProductsService, product_repository_1.ProductRepository, productPricing_repository_1.ProductPricingRepository],
         exports: [product_repository_1.ProductRepository],
     })

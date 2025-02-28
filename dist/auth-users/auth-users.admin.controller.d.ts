@@ -9,6 +9,10 @@ export declare class AuthUserAdminController {
     signin(signinUserDto: SigninUserDto): Promise<{
         access_token: string;
     }>;
+    showUserData(req: any): Promise<{
+        user: import("./entities/auth-user.entity").AuthUser;
+        user_roles: import("./entities/auth-userRole.entity").AuthUserRole;
+    }>;
     getAllUsers(page?: number, limit?: number): Promise<{
         data: import("./entities/auth-user.entity").AuthUser[];
         page: number;
@@ -16,10 +20,6 @@ export declare class AuthUserAdminController {
         total: number;
     }>;
     getUserById(id: string): Promise<import("./entities/auth-user.entity").AuthUser>;
-    showUserData(req: any): Promise<{
-        user: import("./entities/auth-user.entity").AuthUser;
-        user_roles: import("./entities/auth-userRole.entity").AuthUserRole;
-    }>;
     createUserRoles(userId: string): Promise<import("./entities/auth-userRoleType.entity").AuthUserRoleType[]>;
     updateUserRole(id: string, userRoleDto: UpdateUserRoleDto): Promise<import("./entities/auth-userRole.entity").AuthUserRole>;
     deleteUserRole(id: string): Promise<{

@@ -11,11 +11,13 @@ import { CreateProductPricingDto } from './dto/create-productPricing.dto';
 import { ProductPricing } from './entities/productPricing.entity';
 import { ProductPricingRepository } from './repositories/productPricing.repository';
 import { UpdateProductPricingDto } from './dto/update-productPricing.dto';
+import { CategoryRepository } from 'src/categories/repositories/Category.repository';
 export declare class ProductsService {
     private readonly productsRepository;
     private readonly productsVariantRepository;
     private readonly productPricingRepository;
-    constructor(productsRepository: ProductRepository, productsVariantRepository: ProductVariantRepository, productPricingRepository: ProductPricingRepository);
+    private readonly categoriesRepository;
+    constructor(productsRepository: ProductRepository, productsVariantRepository: ProductVariantRepository, productPricingRepository: ProductPricingRepository, categoriesRepository: CategoryRepository);
     validateProduct: (productId: string) => Promise<void>;
     createProduct(productDto: CreateProductDto): Promise<Product>;
     findProductById(id: string): Promise<Product>;
@@ -29,6 +31,9 @@ export declare class ProductsService {
         page: number;
         limit: number;
         total: number;
+    }>;
+    fetchProductsData(): Promise<{
+        data: Product[];
     }>;
     searchProduct(query: string): Promise<{
         data: Product[];

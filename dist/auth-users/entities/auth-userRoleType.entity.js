@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthUserRoleType = void 0;
 const authUserRoleType_enum_1 = require("../../enums/authUserRoleType.enum");
 const typeorm_1 = require("typeorm");
+const auth_userRole_entity_1 = require("./auth-userRole.entity");
 let AuthUserRoleType = class AuthUserRoleType {
 };
 exports.AuthUserRoleType = AuthUserRoleType;
@@ -27,6 +28,11 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true, default: authUserRoleType_enum_1.AuthUserRoleTypeEnum.None }),
     __metadata("design:type", String)
 ], AuthUserRoleType.prototype, "permission_type", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => auth_userRole_entity_1.AuthUserRole, (auth_user_role) => auth_user_role.user_role_type),
+    (0, typeorm_1.JoinColumn)({ name: 'role_id' }),
+    __metadata("design:type", auth_userRole_entity_1.AuthUserRole)
+], AuthUserRoleType.prototype, "user_role", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

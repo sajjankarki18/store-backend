@@ -1,3 +1,4 @@
+import { AuthUserRole } from './auth-userRole.entity';
 export declare class AuthUser {
     id: string;
     email: string;
@@ -9,5 +10,6 @@ export declare class AuthUser {
     created_at: Date;
     deleted_at: Date;
     updated_at: Date;
+    auth_user_role: AuthUserRole;
     role_id: string;
 }

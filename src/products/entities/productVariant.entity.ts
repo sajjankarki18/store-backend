@@ -24,6 +24,9 @@ export class ProductVariant {
   @Column({ nullable: true, default: ProductVariantsSizeEnum.None })
   size: ProductVariantsSizeEnum;
 
+  @Column({ nullable: true, default: false })
+  in_stock: true;
+
   @CreateDateColumn()
   created_at: Date;
 

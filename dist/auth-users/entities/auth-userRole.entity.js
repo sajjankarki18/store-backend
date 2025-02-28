@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthUserRole = void 0;
 const typeorm_1 = require("typeorm");
+const auth_userRoleType_entity_1 = require("./auth-userRoleType.entity");
+const auth_user_entity_1 = require("./auth-user.entity");
 let AuthUserRole = class AuthUserRole {
 };
 exports.AuthUserRole = AuthUserRole;
@@ -34,6 +36,14 @@ __decorate([
     (0, typeorm_1.DeleteDateColumn)(),
     __metadata("design:type", Date)
 ], AuthUserRole.prototype, "deleted_at", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => auth_userRoleType_entity_1.AuthUserRoleType, (auth_user_role_type) => auth_user_role_type.user_role),
+    __metadata("design:type", Array)
+], AuthUserRole.prototype, "user_role_type", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => auth_user_entity_1.AuthUser, (auth_user) => auth_user.auth_user_role),
+    __metadata("design:type", Array)
+], AuthUserRole.prototype, "auth_user", void 0);
 exports.AuthUserRole = AuthUserRole = __decorate([
     (0, typeorm_1.Entity)()
 ], AuthUserRole);

@@ -32,6 +32,10 @@ __decorate([
     __metadata("design:type", String)
 ], ProductVariant.prototype, "size", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true, default: false }),
+    __metadata("design:type", Boolean)
+], ProductVariant.prototype, "in_stock", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], ProductVariant.prototype, "created_at", void 0);

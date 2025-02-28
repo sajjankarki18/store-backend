@@ -29,14 +29,14 @@ let AuthUserAdminController = class AuthUserAdminController {
     signin(signinUserDto) {
         return this.authUserService.signin(signinUserDto);
     }
+    showUserData(req) {
+        return this.authUserService.showUserData(req);
+    }
     getAllUsers(page = 1, limit = 10) {
         return this.authUserService.getAllUsers({ page, limit });
     }
     getUserById(id) {
         return this.authUserService.getUserById(id);
-    }
-    showUserData(req) {
-        return this.authUserService.showUserData(req);
     }
     createUserRoles(userId) {
         return this.authUserService.createUserRoles(userId);
@@ -73,6 +73,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthUserAdminController.prototype, "signin", null);
 __decorate([
+    (0, common_1.Get)('/me'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthUserAdminController.prototype, "showUserData", null);
+__decorate([
     (0, common_1.Get)('/all-users'),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('limit')),
@@ -87,13 +94,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], AuthUserAdminController.prototype, "getUserById", null);
-__decorate([
-    (0, common_1.Get)('/me'),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], AuthUserAdminController.prototype, "showUserData", null);
 __decorate([
     (0, common_1.Post)('/:userId/user-role'),
     __param(0, (0, common_1.Param)('userId')),

@@ -19,6 +19,9 @@ const auth_users_module_1 = require("./auth-users/auth-users.module");
 const authentication_middleware_1 = require("./middlewares/authentication.middleware");
 const jwt_1 = require("@nestjs/jwt");
 const auth_middleware_1 = require("./middlewares/auth-middleware");
+const carts_module_1 = require("./carts/carts.module");
+const customers_module_1 = require("./customers/customers.module");
+const collections_module_1 = require("./collections/collections.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -49,6 +52,9 @@ exports.AppModule = AppModule = __decorate([
             categories_module_1.CategoriesModule,
             auth_users_module_1.AuthUsersModule,
             auth_middleware_1.AuthModule,
+            carts_module_1.CartsModule,
+            customers_module_1.CustomersModule,
+            collections_module_1.CollectionsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

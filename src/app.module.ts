@@ -10,6 +10,9 @@ import { AuthUsersModule } from './auth-users/auth-users.module';
 import { AuthenticationMiddleware } from './middlewares/authentication.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './middlewares/auth-middleware';
+import { CartsModule } from './carts/carts.module';
+import { CustomersModule } from './customers/customers.module';
+import { CollectionsModule } from './collections/collections.module';
 
 @Module({
   imports: [
@@ -30,6 +33,9 @@ import { AuthModule } from './middlewares/auth-middleware';
     CategoriesModule,
     AuthUsersModule,
     AuthModule,
+    CartsModule,
+    CustomersModule,
+    CollectionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

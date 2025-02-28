@@ -163,21 +163,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "deleteProductVariant", null);
 __decorate([
-    (0, common_1.Post)('/pricing'),
+    (0, common_1.Post)('/product-pricing'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_productPricing_dto_1.CreateProductPricingDto]),
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "createProductPricing", null);
 __decorate([
-    (0, common_1.Get)('/pricing/:id'),
+    (0, common_1.Get)('/product-pricing/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "getProductPricingById", null);
 __decorate([
-    (0, common_1.Put)('/pricing/:id'),
+    (0, common_1.Put)('/product-pricing/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -185,7 +185,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "updateProductPricing", null);
 __decorate([
-    (0, common_1.Delete)('/pricing/:id'),
+    (0, common_1.Delete)('/product-pricing/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
