@@ -88,7 +88,6 @@ export class CartService {
         if (cartItemPrice) {
           let cartPrice: number = 0;
           cartItemPrice.forEach((cartItem) => {
-            console.log(typeof cartItem.price);
             cartPrice += parseFloat(cartItem.price.toString());
           });
           this.cartRepository.update(cartItemDto.cart_id, {
@@ -96,7 +95,6 @@ export class CartService {
             total_price: cartPrice,
           });
         }
-
         return updatedCartItem;
       } else {
         /* create new a new cart_item if the product variant is new */
