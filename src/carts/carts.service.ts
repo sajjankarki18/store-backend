@@ -85,8 +85,6 @@ export class CartService {
           },
         });
 
-        console.log(cartItemPrice);
-
         if (cartItemPrice) {
           let cartPrice: number = 0;
           cartItemPrice.forEach((cartItem) => {
