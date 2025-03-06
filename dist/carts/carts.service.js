@@ -32,6 +32,15 @@ let CartService = class CartService {
     }
     async cartActions(cartItemDto) {
         let cartQuantity = 0;
+        let cart = await this.cartRepository.findOne({
+            where: {
+                id: cartItemDto.cart_id,
+            },
+        });
+        if (!cart) {
+            cart = this.cartRepository.create({});
+            cart = await this.cartRepository.save(cart);
+        }
         const cartItems = await this.cartItemRepository.find();
         const productVariant = await this.cartItemRepository.findOne({
             where: {
@@ -56,9 +65,29 @@ let CartService = class CartService {
             });
             if (productVariant) {
                 cartQuantity = cartItemDto.quantity;
-                return await this.cartItemRepository.update(productVariant.id, {
+                const totalPrice = cartQuantity * cartItemDto.price;
+                const updatedCartItem = await this.cartItemRepository.update(productVariant.id, {
                     quantity: cartQuantity,
+                    price: totalPrice,
                 });
+                const cartItemPrice = await this.cartItemRepository.find({
+                    where: {
+                        cart_id: cartItemDto.cart_id,
+                    },
+                });
+                console.log(cartItemPrice);
+                if (cartItemPrice) {
+                    let cartPrice = 0;
+                    cartItemPrice.forEach((cartItem) => {
+                        console.log(typeof cartItem.price);
+                        cartPrice += parseFloat(cartItem.price.toString());
+                    });
+                    this.cartRepository.update(cartItemDto.cart_id, {
+                        cart_status: true,
+                        total_price: cartPrice,
+                    });
+                }
+                return updatedCartItem;
             }
             else {
                 const cartItem = this.cartItemRepository.create({
@@ -67,7 +96,7 @@ let CartService = class CartService {
                     variant_id: cartItemDto.variant_id,
                     quantity: cartItemDto.quantity,
                     price: cartItemDto.price,
-                    cart_id: cartItemDto.cart_id,
+                    cart_id: cart.id,
                 });
                 return await this.cartItemRepository.save(cartItem);
             }

@@ -1,4 +1,5 @@
 import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateCartDto {
   @IsOptional()
@@ -7,7 +8,8 @@ export class CreateCartDto {
 
   @IsOptional()
   @IsNumber()
-  total_price: string;
+  @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
+  total_price: number;
 
   @IsOptional()
   @IsBoolean()
