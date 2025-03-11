@@ -207,7 +207,7 @@ export class CategoriesService {
     };
   }
 
-  async fetchCategoryById(id: string): Promise<Category> {
+  async fetchCategoryById(id: string): Promise<{ data: Category }> {
     const category = await this.categoryRepository.findOne({ where: { id } });
     if (!category) {
       throw new NotFoundException({
@@ -217,7 +217,7 @@ export class CategoriesService {
       });
     }
 
-    return category;
+    return { data: category };
   }
 
   async updateCategory(

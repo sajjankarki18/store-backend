@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { AuthUserRepository } from 'src/auth-users/repositories/auth-user.repository';
-import { AuthUserRoleRepository } from 'src/auth-users/repositories/auth-userRole.repository';
-import { AuthUserRoleTypeRepository } from '../auth-users/repositories/auth-userRoleType.repository';
+import { AuthUserRepository } from 'src/auth-users/admin-auth/repositories/auth-user.repository';
+import { AuthUserRoleRepository } from 'src/auth-users/admin-auth/repositories/auth-userRole.repository';
+import { AuthUserRoleTypeRepository } from '../auth-users/admin-auth/repositories/auth-userRoleType.repository';
 export declare class RolesGaurd implements CanActivate {
     private readonly authUsersRepository;
     private readonly authUserRoleRepository;

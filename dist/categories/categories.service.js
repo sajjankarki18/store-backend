@@ -175,7 +175,7 @@ let CategoriesService = class CategoriesService {
                 error: 'Not Found',
             });
         }
-        return category;
+        return { data: category };
     }
     async updateCategory(id, categoryDto) {
         const category = await this.categoryRepository.findOne({

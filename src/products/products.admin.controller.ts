@@ -58,6 +58,13 @@ export class ProductsAdminController {
     });
   }
 
+  @ApiOperation({ summary: 'Find a product by id' })
+  @ApiResponse({ status: 201, description: 'Fetched a product' })
+  @Get('/:id')
+  findProductById(@Param('id') id: string) {
+    return this.productsService.findProductById(id);
+  }
+
   @ApiOperation({ summary: 'Search a Products' })
   @ApiResponse({ status: 201, description: 'fetched searched products' })
   @Get('/search')

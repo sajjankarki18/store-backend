@@ -5,7 +5,9 @@ export declare class BannersAdminController {
     private readonly bannersService;
     constructor(bannersService: BannersService);
     createBanner(bannerDto: CreateBannerDto): Promise<import("./entities/banner.entity").Banner>;
-    findBannerById(id: string): Promise<import("./entities/banner.entity").Banner>;
+    findBannerById(id: string): Promise<{
+        data: import("./entities/banner.entity").Banner;
+    }>;
     fetchAllBanners(): Promise<{
         data: import("./entities/banner.entity").Banner[];
     }>;

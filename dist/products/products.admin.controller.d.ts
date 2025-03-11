@@ -16,6 +16,9 @@ export declare class ProductsAdminController {
         limit: number;
         total: number;
     }>;
+    findProductById(id: string): Promise<{
+        data: import("./entities/product.entity").Product;
+    }>;
     searchProduct(query: string): Promise<{
         data: import("./entities/product.entity").Product[];
         total: number;

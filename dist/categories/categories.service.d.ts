@@ -27,7 +27,9 @@ export declare class CategoriesService {
         limit: number;
         total: number;
     }>;
-    fetchCategoryById(id: string): Promise<Category>;
+    fetchCategoryById(id: string): Promise<{
+        data: Category;
+    }>;
     updateCategory(id: string, categoryDto: UpdateCategoryDto): Promise<Category>;
     deleteCategory(id: string): Promise<{
         id: string;

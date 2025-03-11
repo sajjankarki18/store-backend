@@ -1,18 +1,28 @@
-import { Module } from '@nestjs/common';
-import { AuthUserService } from './auth-users.service';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthUser } from './entities/auth-user.entity';
+import { AuthUser } from './admin-auth/entities/auth-user.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthUserRole } from './entities/auth-userRole.entity';
-import { AuthUserRoleType } from './entities/auth-userRoleType.entity';
-import { AuthUserAdminController } from './auth-users.admin.controller';
+import { AuthUserRole } from './admin-auth/entities/auth-userRole.entity';
+import { AuthUserRoleType } from './admin-auth/entities/auth-userRoleType.entity';
+import { AuthUserAdminController } from './admin-auth/auth-users.admin.controller';
+import { AuthUserController } from './customers-auth/auth-user.controller';
+import { Customer } from '../customers/entities/customer.entity';
+import { CustomersModule } from '../customers/customers.module';
+import { AuthUserAdminService } from './admin-auth/auth-users.admin.service';
+import { AuthUserService } from './customers-auth/auth-user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AuthUser, AuthUserRole, AuthUserRoleType]),
+    TypeOrmModule.forFeature([
+      AuthUser,
+      AuthUserRole,
+      AuthUserRoleType,
+      Customer,
+    ]),
     JwtModule.register({}),
+    forwardRef(() => CustomersModule),
   ],
-  controllers: [AuthUserAdminController],
-  providers: [AuthUserService],
+  controllers: [AuthUserAdminController, AuthUserController],
+  providers: [AuthUserAdminService, AuthUserService],
 })
 export class AuthUsersModule {}

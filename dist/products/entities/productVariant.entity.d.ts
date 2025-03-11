@@ -4,7 +4,7 @@ export declare class ProductVariant {
     product_id: string;
     color: ProductVariantColorsEnum;
     size: ProductVariantsSizeEnum;
-    in_stock: true;
+    in_stock: boolean;
     created_at: Date;
     deleted_at: Date;
 }

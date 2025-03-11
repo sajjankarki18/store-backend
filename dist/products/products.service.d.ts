@@ -20,7 +20,9 @@ export declare class ProductsService {
     constructor(productsRepository: ProductRepository, productsVariantRepository: ProductVariantRepository, productPricingRepository: ProductPricingRepository, categoriesRepository: CategoryRepository);
     validateProduct: (productId: string) => Promise<void>;
     createProduct(productDto: CreateProductDto): Promise<Product>;
-    findProductById(id: string): Promise<Product>;
+    findProductById(id: string): Promise<{
+        data: Product;
+    }>;
     fetchAllProducts({ page, limit, status, query, }: {
         page: number;
         limit: number;

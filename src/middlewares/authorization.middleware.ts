@@ -6,12 +6,12 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthUser } from '../auth-users/entities/auth-user.entity';
-import { AuthUserRepository } from 'src/auth-users/repositories/auth-user.repository';
-import { AuthUserRole } from '../auth-users/entities/auth-userRole.entity';
-import { AuthUserRoleRepository } from 'src/auth-users/repositories/auth-userRole.repository';
-import { AuthUserRoleType } from 'src/auth-users/entities/auth-userRoleType.entity';
-import { AuthUserRoleTypeRepository } from '../auth-users/repositories/auth-userRoleType.repository';
+import { AuthUser } from '../auth-users/admin-auth/entities/auth-user.entity';
+import { AuthUserRepository } from 'src/auth-users/admin-auth/repositories/auth-user.repository';
+import { AuthUserRole } from '../auth-users/admin-auth/entities/auth-userRole.entity';
+import { AuthUserRoleRepository } from 'src/auth-users/admin-auth/repositories/auth-userRole.repository';
+import { AuthUserRoleType } from 'src/auth-users/admin-auth/entities/auth-userRoleType.entity';
+import { AuthUserRoleTypeRepository } from '../auth-users/admin-auth/repositories/auth-userRoleType.repository';
 import { Request } from 'express';
 
 @Injectable()

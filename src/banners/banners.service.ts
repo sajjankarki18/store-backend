@@ -113,7 +113,7 @@ export class BannersService {
     }
   }
 
-  async findBannerById(id: string): Promise<Banner> {
+  async findBannerById(id: string): Promise<{ data: Banner }> {
     const banner = await this.bannerRepository.findOne({ where: { id } });
 
     if (!banner) {
@@ -124,7 +124,7 @@ export class BannersService {
       });
     }
 
-    return banner;
+    return { data: banner };
   }
 
   /* banners for admin */

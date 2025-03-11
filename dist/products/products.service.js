@@ -71,7 +71,7 @@ let ProductsService = class ProductsService {
                 error: 'Not Found',
             });
         }
-        return product;
+        return { data: product };
     }
     async fetchAllProducts({ page, limit, status, query, }) {
         if (isNaN(Number(page)) || isNaN(Number(limit)) || page < 0 || limit < 0) {
@@ -84,10 +84,10 @@ let ProductsService = class ProductsService {
         const new_limit = limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
         const [data, total] = await this.productsRepository.findAndCount({
             where: {
-                status: status.toLowerCase() === 'published'
+                status: status?.toLowerCase() === 'published'
                     ? status_enum_1.StatusEnum.Published
                     : status_enum_1.StatusEnum.Draft,
-                title: (0, typeorm_2.ILike)(`%${query.trim()}%`),
+                title: (0, typeorm_2.ILike)(`%${query?.trim()}%`),
             },
             skip: (page - 1) * new_limit,
             take: new_limit,

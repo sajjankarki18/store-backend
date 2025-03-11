@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RolesGaurd = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const auth_user_entity_1 = require("../auth-users/entities/auth-user.entity");
-const auth_user_repository_1 = require("../auth-users/repositories/auth-user.repository");
-const auth_userRole_entity_1 = require("../auth-users/entities/auth-userRole.entity");
-const auth_userRole_repository_1 = require("../auth-users/repositories/auth-userRole.repository");
-const auth_userRoleType_entity_1 = require("../auth-users/entities/auth-userRoleType.entity");
-const auth_userRoleType_repository_1 = require("../auth-users/repositories/auth-userRoleType.repository");
+const auth_user_entity_1 = require("../auth-users/admin-auth/entities/auth-user.entity");
+const auth_user_repository_1 = require("../auth-users/admin-auth/repositories/auth-user.repository");
+const auth_userRole_entity_1 = require("../auth-users/admin-auth/entities/auth-userRole.entity");
+const auth_userRole_repository_1 = require("../auth-users/admin-auth/repositories/auth-userRole.repository");
+const auth_userRoleType_entity_1 = require("../auth-users/admin-auth/entities/auth-userRoleType.entity");
+const auth_userRoleType_repository_1 = require("../auth-users/admin-auth/repositories/auth-userRoleType.repository");
 let RolesGaurd = class RolesGaurd {
     constructor(authUsersRepository, authUserRoleRepository, authUserRoleTypeRepository) {
         this.authUsersRepository = authUsersRepository;

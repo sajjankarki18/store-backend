@@ -75,11 +75,9 @@ let CartService = class CartService {
                         cart_id: cartItemDto.cart_id,
                     },
                 });
-                console.log(cartItemPrice);
                 if (cartItemPrice) {
                     let cartPrice = 0;
                     cartItemPrice.forEach((cartItem) => {
-                        console.log(typeof cartItem.price);
                         cartPrice += parseFloat(cartItem.price.toString());
                     });
                     this.cartRepository.update(cartItemDto.cart_id, {

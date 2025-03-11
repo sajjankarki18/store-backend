@@ -70,7 +70,7 @@ export class ProductsService {
     }
   }
 
-  async findProductById(id: string): Promise<Product> {
+  async findProductById(id: string): Promise<{ data: Product }> {
     const product = await this.productsRepository.findOne({ where: { id } });
     if (!product) {
       throw new NotFoundException({
@@ -79,7 +79,7 @@ export class ProductsService {
         error: 'Not Found',
       });
     }
-    return product;
+    return { data: product };
   }
 
   async fetchAllProducts({
@@ -107,10 +107,10 @@ export class ProductsService {
     const [data, total] = await this.productsRepository.findAndCount({
       where: {
         status:
-          status.toLowerCase() === 'published'
+          status?.toLowerCase() === 'published'
             ? StatusEnum.Published
             : StatusEnum.Draft,
-        title: ILike(`%${query.trim()}%`),
+        title: ILike(`%${query?.trim()}%`),
       },
       skip: (page - 1) * new_limit,
       take: new_limit,

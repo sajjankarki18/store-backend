@@ -12,7 +12,9 @@ export declare class CategoriesAdminController {
         limit: number;
         total: number;
     }>;
-    fetchCategoryById(id: string): Promise<import("./entities/category.entity").Category>;
+    fetchCategoryById(id: string): Promise<{
+        data: import("./entities/category.entity").Category;
+    }>;
     updateCategory(id: string, categoryDto: UpdateCategoryDto): Promise<import("./entities/category.entity").Category>;
     deleteCategory(id: string): Promise<{
         id: string;

@@ -106,7 +106,7 @@ let BannersService = class BannersService {
                 error: 'Not Found',
             });
         }
-        return banner;
+        return { data: banner };
     }
     async fetchAllBanners() {
         const banners = await this.bannerRepository.find({

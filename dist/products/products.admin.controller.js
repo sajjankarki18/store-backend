@@ -45,6 +45,9 @@ let ProductsAdminController = class ProductsAdminController {
             query,
         });
     }
+    findProductById(id) {
+        return this.productsService.findProductById(id);
+    }
     searchProduct(query) {
         return this.productsService.searchProduct(query);
     }
@@ -103,6 +106,15 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number, String, String]),
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "fetchAllProducts", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Find a product by id' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Fetched a product' }),
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProductsAdminController.prototype, "findProductById", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Search a Products' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'fetched searched products' }),

@@ -13,7 +13,9 @@ export declare class BannersService {
     validateRedirects: (redirectId: string, redirectType: RedirectTypeEnum) => Promise<void>;
     limitBannersUpdation: () => Promise<void>;
     createBanner(bannerDto: CreateBannerDto): Promise<Banner>;
-    findBannerById(id: string): Promise<Banner>;
+    findBannerById(id: string): Promise<{
+        data: Banner;
+    }>;
     fetchAllBanners(): Promise<{
         data: Banner[];
     }>;

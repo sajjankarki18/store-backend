@@ -10,5 +10,5 @@ export declare class CartService {
     private readonly productRepository;
     private readonly productVariantRepository;
     constructor(cartRepository: CartRepository, cartItemRepository: CartItemRepository, productRepository: ProductRepository, productVariantRepository: ProductVariantRepository);
-    cartActions(cartItemDto: CreateCartItemDto): Promise<CartItem | import("typeorm").UpdateResult>;
+    cartActions(cartItemDto: CreateCartItemDto): Promise<import("typeorm").UpdateResult | CartItem>;
 }

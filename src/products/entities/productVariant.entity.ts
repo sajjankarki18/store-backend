@@ -25,7 +25,7 @@ export class ProductVariant {
   size: ProductVariantsSizeEnum;
 
   @Column({ nullable: true, default: false })
-  in_stock: true;
+  in_stock: boolean;
 
   @CreateDateColumn()
   created_at: Date;
