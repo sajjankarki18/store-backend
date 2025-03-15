@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { ProductsService } from './products.service';
+import { addProductReviewDto } from './dto/add-productReview.dto';
 
 @Controller('/products')
 export class ProductsController {
@@ -9,5 +10,13 @@ export class ProductsController {
   @Get()
   fetchProductsData() {
     return this.productsService.fetchProductsData();
+  }
+
+  @Post('/add-review')
+  addProductReview(
+    @Req() req: any,
+    @Body() productReviewDto: addProductReviewDto,
+  ) {
+    return this.productsService.addProductReview(req, productReviewDto);
   }
 }

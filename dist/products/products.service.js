@@ -24,12 +24,15 @@ const productVariant_repository_1 = require("./repositories/productVariant.repos
 const productPricing_repository_1 = require("./repositories/productPricing.repository");
 const category_entity_1 = require("../categories/entities/category.entity");
 const Category_repository_1 = require("../categories/repositories/Category.repository");
+const productReview_entity_1 = require("./entities/productReview.entity");
+const productReview_repository_1 = require("./repositories/productReview.repository");
 let ProductsService = class ProductsService {
-    constructor(productsRepository, productsVariantRepository, productPricingRepository, categoriesRepository) {
+    constructor(productsRepository, productsVariantRepository, productPricingRepository, categoriesRepository, productReviewRepository) {
         this.productsRepository = productsRepository;
         this.productsVariantRepository = productsVariantRepository;
         this.productPricingRepository = productPricingRepository;
         this.categoriesRepository = categoriesRepository;
+        this.productReviewRepository = productReviewRepository;
         this.validateProduct = async (productId) => {
             const product = await this.productsRepository.findOne({
                 where: {
@@ -154,6 +157,27 @@ let ProductsService = class ProductsService {
         return {
             data: productsData,
         };
+    }
+    async addProductReview(req, productReviewDto) {
+        await this.validateProduct(productReviewDto.product_id);
+        try {
+            const customer = req.user.sub;
+            const productReview = this.productReviewRepository.create({
+                review: productReviewDto.review,
+                product_id: productReviewDto.product_id,
+                customer_id: customer,
+                image_url: productReviewDto.image_url,
+                ratings: productReviewDto.ratings,
+            });
+            return await this.productReviewRepository.save(productReview);
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                message: ['some error occured, while adding a review!', error],
+                error: 'Internal server error',
+            });
+        }
     }
     async searchProduct(query) {
         let searchedProducts;
@@ -435,9 +459,11 @@ exports.ProductsService = ProductsService = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(productVariant_entity_1.ProductVariant)),
     __param(2, (0, typeorm_1.InjectRepository)(productPricing_repository_1.ProductPricingRepository)),
     __param(3, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __param(4, (0, typeorm_1.InjectRepository)(productReview_entity_1.ProductReview)),
     __metadata("design:paramtypes", [product_repository_1.ProductRepository,
         productVariant_repository_1.ProductVariantRepository,
         productPricing_repository_1.ProductPricingRepository,
-        Category_repository_1.CategoryRepository])
+        Category_repository_1.CategoryRepository,
+        productReview_repository_1.ProductReviewRepository])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

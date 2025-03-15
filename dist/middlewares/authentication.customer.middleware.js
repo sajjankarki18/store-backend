@@ -9,29 +9,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthenticationMiddleware = void 0;
+exports.AuthenticationCustomerMiddleware = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
-let AuthenticationMiddleware = class AuthenticationMiddleware {
+let AuthenticationCustomerMiddleware = class AuthenticationCustomerMiddleware {
     constructor(jwtService) {
         this.jwtService = jwtService;
     }
     async use(req, res, next) {
-        const authHeader = req.headers.authorization;
-        if (!authHeader?.startsWith('Bearer ')) {
+        const authHeaders = req.headers.authorization;
+        if (!authHeaders?.startsWith('Bearer ')) {
             throw new common_1.UnauthorizedException({
                 statusCode: common_1.HttpStatus.UNAUTHORIZED,
-                message: ['Please login to continue'],
+                message: ['Please login to continue...'],
                 error: 'Unauthorized',
             });
         }
-        const token = authHeader.split(' ')[1];
+        const token = authHeaders.split(' ')[1];
+        const decodedToken = await this.jwtService.verify(token, {
+            secret: process.env.SECRET,
+        });
+        req.user = decodedToken;
+        next();
         try {
-            const decoded = await this.jwtService.verify(token, {
-                secret: process.env.SECRET,
-            });
-            req.user = decoded;
-            next();
         }
         catch (error) {
             throw new common_1.UnauthorizedException({
@@ -42,9 +42,9 @@ let AuthenticationMiddleware = class AuthenticationMiddleware {
         }
     }
 };
-exports.AuthenticationMiddleware = AuthenticationMiddleware;
-exports.AuthenticationMiddleware = AuthenticationMiddleware = __decorate([
+exports.AuthenticationCustomerMiddleware = AuthenticationCustomerMiddleware;
+exports.AuthenticationCustomerMiddleware = AuthenticationCustomerMiddleware = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [jwt_1.JwtService])
-], AuthenticationMiddleware);
-//# sourceMappingURL=authentication.middleware.js.map
+], AuthenticationCustomerMiddleware);
+//# sourceMappingURL=authentication.customer.middleware.js.map

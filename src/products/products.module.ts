@@ -9,6 +9,8 @@ import { ProductPricing } from './entities/productPricing.entity';
 import { ProductPricingRepository } from './repositories/productPricing.repository';
 import { ProductsController } from './products.controller';
 import { Category } from '../categories/entities/category.entity';
+import { ProductReview } from './entities/productReview.entity';
+import { ProductReviewRepository } from './repositories/productReview.repository';
 
 @Module({
   imports: [
@@ -17,10 +19,16 @@ import { Category } from '../categories/entities/category.entity';
       ProductVariant,
       ProductPricing,
       Category,
+      ProductReview,
     ]),
   ],
   controllers: [ProductsAdminController, ProductsController],
-  providers: [ProductsService, ProductRepository, ProductPricingRepository],
+  providers: [
+    ProductsService,
+    ProductRepository,
+    ProductPricingRepository,
+    ProductReviewRepository,
+  ],
   exports: [ProductRepository],
 })
 export class ProductsModule {}

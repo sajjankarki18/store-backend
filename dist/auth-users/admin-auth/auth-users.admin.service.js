@@ -105,6 +105,10 @@ let AuthUserAdminService = class AuthUserAdminService {
         return await this.signToken(user.id, user.email);
     }
     async signToken(userId, email) {
+        const jwtSECRET = process.env.SECRET;
+        if (!jwtSECRET) {
+            throw new Error('JWT secret is not defined');
+        }
         const payload = {
             sub: userId,
             email,
@@ -162,6 +166,7 @@ let AuthUserAdminService = class AuthUserAdminService {
             },
             select: ['id', 'email', 'username', 'is_active', 'country'],
         });
+        console.log(user);
         if (!user) {
             throw new common_1.NotFoundException({
                 statusCode: common_1.HttpStatus.NOT_FOUND,

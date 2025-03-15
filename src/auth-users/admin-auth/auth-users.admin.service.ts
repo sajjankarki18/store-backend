@@ -134,6 +134,11 @@ export class AuthUserAdminService {
     userId: string,
     email: string,
   ): Promise<{ access_token: string }> {
+    const jwtSECRET = process.env.SECRET;
+    if (!jwtSECRET) {
+      throw new Error('JWT secret is not defined');
+    }
+
     const payload = {
       sub: userId,
       email,
@@ -208,6 +213,8 @@ export class AuthUserAdminService {
       },
       select: ['id', 'email', 'username', 'is_active', 'country'],
     });
+
+    console.log(user);
 
     if (!user) {
       throw new NotFoundException({

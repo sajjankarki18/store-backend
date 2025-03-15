@@ -13,7 +13,6 @@ import { CreateUserDto } from './dto/signup-user.dto';
 import * as argon from 'argon2';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import * as dotenv from 'dotenv';
 
 @Injectable()
 export class AuthUserService {

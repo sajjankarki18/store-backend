@@ -22,6 +22,9 @@ import { ProductPricingRepository } from './repositories/productPricing.reposito
 import { UpdateProductPricingDto } from './dto/update-productPricing.dto';
 import { Category } from '../categories/entities/category.entity';
 import { CategoryRepository } from 'src/categories/repositories/Category.repository';
+import { addProductReviewDto } from './dto/add-productReview.dto';
+import { ProductReview } from './entities/productReview.entity';
+import { ProductReviewRepository } from './repositories/productReview.repository';
 
 @Injectable()
 export class ProductsService {
@@ -34,6 +37,8 @@ export class ProductsService {
     private readonly productPricingRepository: ProductPricingRepository,
     @InjectRepository(Category)
     private readonly categoriesRepository: CategoryRepository,
+    @InjectRepository(ProductReview)
+    private readonly productReviewRepository: ProductReviewRepository,
   ) {}
 
   validateProduct = async (productId: string) => {
@@ -187,6 +192,31 @@ export class ProductsService {
     return {
       data: productsData,
     };
+  }
+
+  /* add a product review method */
+  async addProductReview(req: any, productReviewDto: addProductReviewDto) {
+    await this.validateProduct(productReviewDto.product_id);
+
+    try {
+      const customer = req.user.sub;
+
+      const productReview = this.productReviewRepository.create({
+        review: productReviewDto.review,
+        product_id: productReviewDto.product_id,
+        customer_id: customer,
+        image_url: productReviewDto.image_url,
+        ratings: productReviewDto.ratings,
+      });
+
+      return await this.productReviewRepository.save(productReview);
+    } catch (error) {
+      throw new InternalServerErrorException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: ['some error occured, while adding a review!', error],
+        error: 'Internal server error',
+      });
+    }
   }
 
   async searchProduct(

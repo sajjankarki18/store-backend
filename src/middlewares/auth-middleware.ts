@@ -1,7 +1,8 @@
 // auth.module.ts
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthenticationMiddleware } from './authentication.middleware';
+import { AuthenticationAdminMiddleware } from './authentication.admin.middleware';
+import { AuthenticationCustomerMiddleware } from './authentication.customer.middleware';
 
 @Module({
   imports: [
@@ -9,6 +10,6 @@ import { AuthenticationMiddleware } from './authentication.middleware';
       secret: process.env.SECRET,
     }),
   ],
-  providers: [AuthenticationMiddleware],
+  providers: [AuthenticationAdminMiddleware, AuthenticationCustomerMiddleware],
 })
 export class AuthModule {}

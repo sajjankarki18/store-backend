@@ -8,15 +8,21 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class CustomerReview {
+export class ProductReview {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: true })
+  review: string;
+
+  @Column({ nullable: true })
+  product_id: string;
 
   @Column({ nullable: true })
   customer_id: string;
 
   @Column({ nullable: true })
-  review: string;
+  image_url: string;
 
   @Column('decimal', { nullable: true })
   ratings: number;

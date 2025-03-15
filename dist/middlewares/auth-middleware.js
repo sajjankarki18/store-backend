@@ -9,7 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
-const authentication_middleware_1 = require("./authentication.middleware");
+const authentication_admin_middleware_1 = require("./authentication.admin.middleware");
+const authentication_customer_middleware_1 = require("./authentication.customer.middleware");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -20,7 +21,7 @@ exports.AuthModule = AuthModule = __decorate([
                 secret: process.env.SECRET,
             }),
         ],
-        providers: [authentication_middleware_1.AuthenticationMiddleware],
+        providers: [authentication_admin_middleware_1.AuthenticationAdminMiddleware, authentication_customer_middleware_1.AuthenticationCustomerMiddleware],
     })
 ], AuthModule);
 //# sourceMappingURL=auth-middleware.js.map

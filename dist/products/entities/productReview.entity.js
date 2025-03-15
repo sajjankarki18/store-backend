@@ -9,40 +9,48 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerReview = void 0;
+exports.ProductReview = void 0;
 const typeorm_1 = require("typeorm");
-let CustomerReview = class CustomerReview {
+let ProductReview = class ProductReview {
 };
-exports.CustomerReview = CustomerReview;
+exports.ProductReview = ProductReview;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
     __metadata("design:type", String)
-], CustomerReview.prototype, "id", void 0);
+], ProductReview.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], CustomerReview.prototype, "customer_id", void 0);
+], ProductReview.prototype, "review", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], CustomerReview.prototype, "review", void 0);
+], ProductReview.prototype, "product_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], ProductReview.prototype, "customer_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], ProductReview.prototype, "image_url", void 0);
 __decorate([
     (0, typeorm_1.Column)('decimal', { nullable: true }),
     __metadata("design:type", Number)
-], CustomerReview.prototype, "ratings", void 0);
+], ProductReview.prototype, "ratings", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
-], CustomerReview.prototype, "created_at", void 0);
+], ProductReview.prototype, "created_at", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
-], CustomerReview.prototype, "updated_at", void 0);
+], ProductReview.prototype, "updated_at", void 0);
 __decorate([
     (0, typeorm_1.DeleteDateColumn)(),
     __metadata("design:type", Date)
-], CustomerReview.prototype, "deleted_at", void 0);
-exports.CustomerReview = CustomerReview = __decorate([
+], ProductReview.prototype, "deleted_at", void 0);
+exports.ProductReview = ProductReview = __decorate([
     (0, typeorm_1.Entity)()
-], CustomerReview);
-//# sourceMappingURL=customerReview.entity.js.map
+], ProductReview);
+//# sourceMappingURL=productReview.entity.js.map

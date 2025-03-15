@@ -24,6 +24,82 @@ let CustomerService = class CustomerService {
         this.customerRepository = customerRepository;
         this.customerReviewRepository = customerReviewRepository;
     }
+    async getAllCustomerReviews() {
+        const reviews = await this.customerReviewRepository.find();
+        return { data: reviews };
+    }
+    async addReview(req, addReview) {
+        try {
+            const customer = req.user.sub;
+            console.log(customer);
+            const customerReview = this.customerReviewRepository.create({
+                customer_id: customer,
+                review: addReview.review,
+                ratings: addReview.ratings,
+            });
+            return await this.customerReviewRepository.save(customerReview);
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                message: ['Some error has been occured, while adding review!', error],
+                error: 'Internal Server Error',
+            });
+        }
+    }
+    async updateReview(id, editReview) {
+        const review = await this.customerReviewRepository.findOne({
+            where: {
+                id: id,
+            },
+        });
+        if (!review) {
+            throw new common_1.NotFoundException({
+                statusCode: common_1.HttpStatus.NOT_FOUND,
+                message: ['Review not found!'],
+                error: 'Not Found',
+            });
+        }
+        try {
+            await this.customerReviewRepository.update({ id }, {
+                review: editReview.review,
+                ratings: editReview.ratings,
+            });
+            return await this.customerReviewRepository.findOne({ where: { id } });
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                message: ['some error occured, while deleting review!', error],
+                error: 'Internal Server Error',
+            });
+        }
+    }
+    async deleteReview(id) {
+        const review = await this.customerReviewRepository.findOne({
+            where: {
+                id: id,
+            },
+        });
+        if (!review) {
+            throw new common_1.NotFoundException({
+                statusCode: common_1.HttpStatus.NOT_FOUND,
+                message: ['Review not found!'],
+                error: 'Not Found',
+            });
+        }
+        try {
+            await this.customerReviewRepository.delete(id);
+            return { id: `${id}`, message: `review has been deleted!` };
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
+                message: ['some error occured, while deleting review!', error],
+                error: 'Internal Server Error',
+            });
+        }
+    }
 };
 exports.CustomerService = CustomerService;
 exports.CustomerService = CustomerService = __decorate([

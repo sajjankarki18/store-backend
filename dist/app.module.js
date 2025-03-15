@@ -16,19 +16,25 @@ const banners_module_1 = require("./banners/banners.module");
 const products_module_1 = require("./products/products.module");
 const categories_module_1 = require("./categories/categories.module");
 const auth_users_module_1 = require("./auth-users/auth-users.module");
-const authentication_middleware_1 = require("./middlewares/authentication.middleware");
+const authentication_admin_middleware_1 = require("./middlewares/authentication.admin.middleware");
 const jwt_1 = require("@nestjs/jwt");
 const auth_middleware_1 = require("./middlewares/auth-middleware");
 const carts_module_1 = require("./carts/carts.module");
 const customers_module_1 = require("./customers/customers.module");
 const collections_module_1 = require("./collections/collections.module");
+const authentication_customer_middleware_1 = require("./middlewares/authentication.customer.middleware");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
-            .apply(authentication_middleware_1.AuthenticationMiddleware)
+            .apply(authentication_admin_middleware_1.AuthenticationAdminMiddleware)
             .exclude('/admin/auth_user/signin')
             .exclude('admin/auth_user/signup')
             .forRoutes('/admin');
+        consumer
+            .apply(authentication_customer_middleware_1.AuthenticationCustomerMiddleware)
+            .exclude('/auth_user/signup')
+            .exclude('/auth_user/login')
+            .forRoutes('/customers/review', '/products/add-review');
     }
 };
 exports.AppModule = AppModule;

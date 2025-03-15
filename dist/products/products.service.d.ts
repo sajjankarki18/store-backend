@@ -12,12 +12,16 @@ import { ProductPricing } from './entities/productPricing.entity';
 import { ProductPricingRepository } from './repositories/productPricing.repository';
 import { UpdateProductPricingDto } from './dto/update-productPricing.dto';
 import { CategoryRepository } from 'src/categories/repositories/Category.repository';
+import { addProductReviewDto } from './dto/add-productReview.dto';
+import { ProductReview } from './entities/productReview.entity';
+import { ProductReviewRepository } from './repositories/productReview.repository';
 export declare class ProductsService {
     private readonly productsRepository;
     private readonly productsVariantRepository;
     private readonly productPricingRepository;
     private readonly categoriesRepository;
-    constructor(productsRepository: ProductRepository, productsVariantRepository: ProductVariantRepository, productPricingRepository: ProductPricingRepository, categoriesRepository: CategoryRepository);
+    private readonly productReviewRepository;
+    constructor(productsRepository: ProductRepository, productsVariantRepository: ProductVariantRepository, productPricingRepository: ProductPricingRepository, categoriesRepository: CategoryRepository, productReviewRepository: ProductReviewRepository);
     validateProduct: (productId: string) => Promise<void>;
     createProduct(productDto: CreateProductDto): Promise<Product>;
     findProductById(id: string): Promise<{
@@ -37,6 +41,7 @@ export declare class ProductsService {
     fetchProductsData(): Promise<{
         data: Product[];
     }>;
+    addProductReview(req: any, productReviewDto: addProductReviewDto): Promise<ProductReview>;
     searchProduct(query: string): Promise<{
         data: Product[];
         total: number;
