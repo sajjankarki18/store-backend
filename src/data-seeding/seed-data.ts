@@ -13,11 +13,15 @@ import {
   ProductVariantsSizeEnum,
 } from 'src/enums/variants.enum';
 import { CurrencyEnum } from 'src/enums/currency.enum';
+import { Collection } from 'src/collections/entities/collection.entity';
+import { CollectionRedirect } from 'src/collections/entities/CollectionRedirect.entity';
+import { CollectionRedirectTypeEnum } from 'src/enums/collectionRedirectType.enum';
 
 export const seedData = async (dataSource: DataSource): Promise<void> => {
   await seedBannersData(dataSource);
   await seedCategoriesData(dataSource);
   await seedProductsData(dataSource);
+  await seedCollectionsData(dataSource);
 };
 
 const seedBannersData = async (dataSource: DataSource) => {
@@ -223,5 +227,70 @@ const seedProductsData = async (datasource: DataSource) => {
 
       await productPricingRepository.save(pricing);
     }
+  }
+};
+
+const seedCollectionsData = async (datasource: DataSource) => {
+  const collectionRepository = datasource.getRepository(Collection);
+  const collectionRedirectRepository =
+    datasource.getRepository(CollectionRedirect);
+
+  const categoriesRepository = datasource.getRepository(Category);
+  const productsRepository = datasource.getRepository(Product);
+
+  const products = await productsRepository.find();
+  const categories = await categoriesRepository.find();
+
+  const createCollections = async () => {
+    return collectionRepository.create({
+      title: faker.lorem.word(),
+      status: faker.helpers.arrayElement([
+        StatusEnum.Published,
+        StatusEnum.Draft,
+      ]),
+      image_url: './images/randomImage.png',
+    });
+  };
+
+  let createdCollections: Collection[] = [];
+
+  createdCollections = [
+    ...createdCollections,
+    ...(await Promise.all(
+      Array.from({ length: 30 }, () => createCollections()),
+    )),
+  ];
+
+  const collectionsData = await collectionRepository.save(createdCollections);
+
+  const collectionRedirectData: CollectionRedirect[] = [];
+
+  for (const collection of collectionsData) {
+    const maxCollection = faker.number.int({ min: 1, max: 2 });
+
+    const categoryData = faker.helpers.arrayElement(categories);
+    const productData = faker.helpers.arrayElement(products);
+
+    for (let i = 0; i < maxCollection; i++) {
+      /* category-redirect data */
+      collectionRedirectData.push(
+        collectionRedirectRepository.create({
+          collection_id: collection.id,
+          redirect_id: categoryData.id,
+          redirect_type: CollectionRedirectTypeEnum.Category,
+        }),
+      );
+
+      /* product-redirect data */
+      collectionRedirectData.push(
+        collectionRedirectRepository.create({
+          collection_id: collection.id,
+          redirect_id: productData.id,
+          redirect_type: CollectionRedirectTypeEnum.Product,
+        }),
+      );
+    }
+
+    await collectionRedirectRepository.save(collectionRedirectData);
   }
 };

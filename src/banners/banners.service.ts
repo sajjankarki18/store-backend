@@ -17,6 +17,8 @@ import { ProductRepository } from 'src/products/repositories/product.repository'
 import { Category } from '../categories/entities/category.entity';
 import { CategoryRepository } from '../categories/repositories/Category.repository';
 import { StatusEnum } from 'src/enums/status.enum';
+import { CollectionRepository } from '../collections/repositories/collection.repository';
+import { Collection } from '../collections/entities/collection.entity';
 
 const banners_limit: number = parseInt(process.env.BANNERS_LIMIT) || 5;
 
@@ -29,6 +31,8 @@ export class BannersService {
     private readonly productsRepository: ProductRepository,
     @InjectRepository(Category)
     private readonly categoriesRepository: CategoryRepository,
+    @InjectRepository(Collection)
+    private readonly collectionRepository: CollectionRepository,
   ) {}
 
   //validation before creating or updating the banners, check if the redirects exists on the accociated tables
@@ -52,7 +56,7 @@ export class BannersService {
       if (!category) {
         throw new BadRequestException({
           statusCode: HttpStatus.BAD_REQUEST,
-          message: ['Invalid redirect id'],
+          message: ['Invalid redirect id for category'],
           error: 'Bad Request',
         });
       }
@@ -64,7 +68,21 @@ export class BannersService {
       if (!product) {
         throw new BadRequestException({
           statusCode: HttpStatus.BAD_REQUEST,
-          message: ['Invalid redirect id'],
+          message: ['Invalid redirect id for product'],
+          error: 'Bad Request',
+        });
+      }
+    } else if (redirectType === RedirectTypeEnum.Collection) {
+      const collection = await this.collectionRepository.findOne({
+        where: {
+          id: redirectId,
+        },
+      });
+
+      if (!collection) {
+        throw new BadRequestException({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: ['Invalid redirect id for collection'],
           error: 'Bad Request',
         });
       }

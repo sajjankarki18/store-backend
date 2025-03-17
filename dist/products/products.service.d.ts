@@ -27,11 +27,10 @@ export declare class ProductsService {
     findProductById(id: string): Promise<{
         data: Product;
     }>;
-    fetchAllProducts({ page, limit, status, query, }: {
+    fetchAllProducts({ page, limit, status, }: {
         page: number;
         limit: number;
         status: StatusEnum;
-        query: string;
     }): Promise<{
         data: Product[];
         page: number;

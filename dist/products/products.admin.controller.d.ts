@@ -10,7 +10,11 @@ export declare class ProductsAdminController {
     private readonly productsService;
     constructor(productsService: ProductsService);
     createProduct(productDto: CreateProductDto): Promise<import("./entities/product.entity").Product>;
-    fetchAllProducts(page: number, limit: number, status: StatusEnum, query: string): Promise<{
+    searchProduct(query: string): Promise<{
+        data: import("./entities/product.entity").Product[];
+        total: number;
+    }>;
+    fetchAllProducts(page: number, limit: number, status: StatusEnum): Promise<{
         data: import("./entities/product.entity").Product[];
         page: number;
         limit: number;
@@ -18,10 +22,6 @@ export declare class ProductsAdminController {
     }>;
     findProductById(id: string): Promise<{
         data: import("./entities/product.entity").Product;
-    }>;
-    searchProduct(query: string): Promise<{
-        data: import("./entities/product.entity").Product[];
-        total: number;
     }>;
     updateProduct(id: string, productDto: UpdateProductDto): Promise<import("./entities/product.entity").Product>;
     deleteProduct(id: string): Promise<{

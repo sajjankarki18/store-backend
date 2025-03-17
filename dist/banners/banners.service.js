@@ -23,12 +23,15 @@ const product_repository_1 = require("../products/repositories/product.repositor
 const category_entity_1 = require("../categories/entities/category.entity");
 const Category_repository_1 = require("../categories/repositories/Category.repository");
 const status_enum_1 = require("../enums/status.enum");
+const collection_repository_1 = require("../collections/repositories/collection.repository");
+const collection_entity_1 = require("../collections/entities/collection.entity");
 const banners_limit = parseInt(process.env.BANNERS_LIMIT) || 5;
 let BannersService = class BannersService {
-    constructor(bannerRepository, productsRepository, categoriesRepository) {
+    constructor(bannerRepository, productsRepository, categoriesRepository, collectionRepository) {
         this.bannerRepository = bannerRepository;
         this.productsRepository = productsRepository;
         this.categoriesRepository = categoriesRepository;
+        this.collectionRepository = collectionRepository;
         this.validateRedirects = async (redirectId, redirectType) => {
             if (!redirectId || !redirectType) {
                 throw new common_1.NotFoundException({
@@ -44,7 +47,7 @@ let BannersService = class BannersService {
                 if (!category) {
                     throw new common_1.BadRequestException({
                         statusCode: common_1.HttpStatus.BAD_REQUEST,
-                        message: ['Invalid redirect id'],
+                        message: ['Invalid redirect id for category'],
                         error: 'Bad Request',
                     });
                 }
@@ -56,7 +59,21 @@ let BannersService = class BannersService {
                 if (!product) {
                     throw new common_1.BadRequestException({
                         statusCode: common_1.HttpStatus.BAD_REQUEST,
-                        message: ['Invalid redirect id'],
+                        message: ['Invalid redirect id for product'],
+                        error: 'Bad Request',
+                    });
+                }
+            }
+            else if (redirectType === redirectTypes_enum_1.RedirectTypeEnum.Collection) {
+                const collection = await this.collectionRepository.findOne({
+                    where: {
+                        id: redirectId,
+                    },
+                });
+                if (!collection) {
+                    throw new common_1.BadRequestException({
+                        statusCode: common_1.HttpStatus.BAD_REQUEST,
+                        message: ['Invalid redirect id for collection'],
                         error: 'Bad Request',
                     });
                 }
@@ -225,8 +242,10 @@ exports.BannersService = BannersService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(banner_entity_1.Banner)),
     __param(1, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
     __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __param(3, (0, typeorm_1.InjectRepository)(collection_entity_1.Collection)),
     __metadata("design:paramtypes", [banner_repository_1.BannerRepository,
         product_repository_1.ProductRepository,
-        Category_repository_1.CategoryRepository])
+        Category_repository_1.CategoryRepository,
+        collection_repository_1.CollectionRepository])
 ], BannersService);
 //# sourceMappingURL=banners.service.js.map

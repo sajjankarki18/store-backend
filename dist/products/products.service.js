@@ -76,7 +76,7 @@ let ProductsService = class ProductsService {
         }
         return { data: product };
     }
-    async fetchAllProducts({ page, limit, status, query, }) {
+    async fetchAllProducts({ page, limit, status, }) {
         if (isNaN(Number(page)) || isNaN(Number(limit)) || page < 0 || limit < 0) {
             throw new common_1.BadRequestException({
                 statusCode: common_1.HttpStatus.BAD_REQUEST,
@@ -85,22 +85,23 @@ let ProductsService = class ProductsService {
             });
         }
         const new_limit = limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
-        const [data, total] = await this.productsRepository.findAndCount({
+        const [productsData, totalProducts] = await this.productsRepository.findAndCount({
             where: {
-                status: status?.toLowerCase() === 'published'
-                    ? status_enum_1.StatusEnum.Published
-                    : status_enum_1.StatusEnum.Draft,
-                title: (0, typeorm_2.ILike)(`%${query?.trim()}%`),
+                status: !status || status.trim() === ''
+                    ? (0, typeorm_2.In)([status_enum_1.StatusEnum.Published, status_enum_1.StatusEnum.Draft])
+                    : status.trim().toLowerCase() === status_enum_1.StatusEnum.Published
+                        ? status_enum_1.StatusEnum.Published
+                        : status_enum_1.StatusEnum.Draft,
             },
             skip: (page - 1) * new_limit,
             take: new_limit,
-            order: { created_at: 'desc' },
+            order: { created_at: 'DESC' },
         });
         return {
-            data,
+            data: productsData,
             page,
             limit: new_limit,
-            total,
+            total: totalProducts,
         };
     }
     async fetchProductsData() {

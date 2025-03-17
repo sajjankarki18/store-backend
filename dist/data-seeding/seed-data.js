@@ -12,10 +12,14 @@ const productVariant_entity_1 = require("../products/entities/productVariant.ent
 const productPricing_entity_1 = require("../products/entities/productPricing.entity");
 const variants_enum_1 = require("../enums/variants.enum");
 const currency_enum_1 = require("../enums/currency.enum");
+const collection_entity_1 = require("../collections/entities/collection.entity");
+const CollectionRedirect_entity_1 = require("../collections/entities/CollectionRedirect.entity");
+const collectionRedirectType_enum_1 = require("../enums/collectionRedirectType.enum");
 const seedData = async (dataSource) => {
     await seedBannersData(dataSource);
     await seedCategoriesData(dataSource);
     await seedProductsData(dataSource);
+    await seedCollectionsData(dataSource);
 };
 exports.seedData = seedData;
 const seedBannersData = async (dataSource) => {
@@ -180,6 +184,49 @@ const seedProductsData = async (datasource) => {
             });
             await productPricingRepository.save(pricing);
         }
+    }
+};
+const seedCollectionsData = async (datasource) => {
+    const collectionRepository = datasource.getRepository(collection_entity_1.Collection);
+    const collectionRedirectRepository = datasource.getRepository(CollectionRedirect_entity_1.CollectionRedirect);
+    const categoriesRepository = datasource.getRepository(category_entity_1.Category);
+    const productsRepository = datasource.getRepository(product_entity_1.Product);
+    const products = await productsRepository.find();
+    const categories = await categoriesRepository.find();
+    const createCollections = async () => {
+        return collectionRepository.create({
+            title: faker_1.faker.lorem.word(),
+            status: faker_1.faker.helpers.arrayElement([
+                status_enum_1.StatusEnum.Published,
+                status_enum_1.StatusEnum.Draft,
+            ]),
+            image_url: './images/randomImage.png',
+        });
+    };
+    let createdCollections = [];
+    createdCollections = [
+        ...createdCollections,
+        ...(await Promise.all(Array.from({ length: 30 }, () => createCollections()))),
+    ];
+    const collectionsData = await collectionRepository.save(createdCollections);
+    const collectionRedirectData = [];
+    for (const collection of collectionsData) {
+        const maxCollection = faker_1.faker.number.int({ min: 1, max: 2 });
+        const categoryData = faker_1.faker.helpers.arrayElement(categories);
+        const productData = faker_1.faker.helpers.arrayElement(products);
+        for (let i = 0; i < maxCollection; i++) {
+            collectionRedirectData.push(collectionRedirectRepository.create({
+                collection_id: collection.id,
+                redirect_id: categoryData.id,
+                redirect_type: collectionRedirectType_enum_1.CollectionRedirectTypeEnum.Category,
+            }));
+            collectionRedirectData.push(collectionRedirectRepository.create({
+                collection_id: collection.id,
+                redirect_id: productData.id,
+                redirect_type: collectionRedirectType_enum_1.CollectionRedirectTypeEnum.Product,
+            }));
+        }
+        await collectionRedirectRepository.save(collectionRedirectData);
     }
 };
 //# sourceMappingURL=seed-data.js.map

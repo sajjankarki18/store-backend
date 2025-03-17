@@ -17,15 +17,18 @@ const products_module_1 = require("../products/products.module");
 const category_entity_1 = require("../categories/entities/category.entity");
 const product_entity_1 = require("../products/entities/product.entity");
 const banners_controller_1 = require("./banners.controller");
+const collections_module_1 = require("../collections/collections.module");
+const collection_entity_1 = require("../collections/entities/collection.entity");
 let BannersModule = class BannersModule {
 };
 exports.BannersModule = BannersModule;
 exports.BannersModule = BannersModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([banner_entity_1.Banner, category_entity_1.Category, product_entity_1.Product]),
+            typeorm_1.TypeOrmModule.forFeature([banner_entity_1.Banner, category_entity_1.Category, product_entity_1.Product, collection_entity_1.Collection]),
             (0, common_1.forwardRef)(() => categories_module_1.CategoriesModule),
             (0, common_1.forwardRef)(() => products_module_1.ProductsModule),
+            (0, common_1.forwardRef)(() => collections_module_1.CollectionsModule),
         ],
         controllers: [banners_admin_controller_1.BannersAdminController, banners_controller_1.BannersControllers],
         providers: [banners_service_1.BannersService],

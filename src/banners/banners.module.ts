@@ -8,12 +8,15 @@ import { ProductsModule } from '../products/products.module';
 import { Category } from '../categories/entities/category.entity';
 import { Product } from '../products/entities/product.entity';
 import { BannersControllers } from './banners.controller';
+import { CollectionsModule } from 'src/collections/collections.module';
+import { Collection } from 'src/collections/entities/collection.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Banner, Category, Product]),
+    TypeOrmModule.forFeature([Banner, Category, Product, Collection]),
     forwardRef(() => CategoriesModule),
     forwardRef(() => ProductsModule),
+    forwardRef(() => CollectionsModule),
   ],
   controllers: [BannersAdminController, BannersControllers],
   providers: [BannersService],

@@ -34,6 +34,13 @@ export class ProductsAdminController {
     return this.productsService.createProduct(productDto);
   }
 
+  @ApiOperation({ summary: 'Search a Products' })
+  @ApiResponse({ status: 201, description: 'fetched searched products' })
+  @Get('/search')
+  searchProduct(@Query('q') query: string) {
+    return this.productsService.searchProduct(query);
+  }
+
   @ApiOperation({ summary: 'Find all Products' })
   @ApiResponse({ status: 201, description: 'Products fetched sucessfully' })
   @Get()
@@ -41,7 +48,6 @@ export class ProductsAdminController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @Query('status') status: StatusEnum,
-    @Query('q') query: string,
   ) {
     if (!page || !limit) {
       throw new BadRequestException({
@@ -54,7 +60,6 @@ export class ProductsAdminController {
       page,
       limit,
       status,
-      query,
     });
   }
 
@@ -63,13 +68,6 @@ export class ProductsAdminController {
   @Get('/:id')
   findProductById(@Param('id') id: string) {
     return this.productsService.findProductById(id);
-  }
-
-  @ApiOperation({ summary: 'Search a Products' })
-  @ApiResponse({ status: 201, description: 'fetched searched products' })
-  @Get('/search')
-  searchProduct(@Query('q') query: string) {
-    return this.productsService.searchProduct(query);
   }
 
   @ApiOperation({ summary: 'Update a Products' })

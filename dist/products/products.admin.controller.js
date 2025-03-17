@@ -30,7 +30,10 @@ let ProductsAdminController = class ProductsAdminController {
     createProduct(productDto) {
         return this.productsService.createProduct(productDto);
     }
-    fetchAllProducts(page = 1, limit = 10, status, query) {
+    searchProduct(query) {
+        return this.productsService.searchProduct(query);
+    }
+    fetchAllProducts(page = 1, limit = 10, status) {
         if (!page || !limit) {
             throw new common_1.BadRequestException({
                 statusCode: common_1.HttpStatus.BAD_REQUEST,
@@ -42,14 +45,10 @@ let ProductsAdminController = class ProductsAdminController {
             page,
             limit,
             status,
-            query,
         });
     }
     findProductById(id) {
         return this.productsService.findProductById(id);
-    }
-    searchProduct(query) {
-        return this.productsService.searchProduct(query);
     }
     updateProduct(id, productDto) {
         return this.productsService.updateProduct(id, productDto);
@@ -95,15 +94,23 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "createProduct", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Search a Products' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'fetched searched products' }),
+    (0, common_1.Get)('/search'),
+    __param(0, (0, common_1.Query)('q')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProductsAdminController.prototype, "searchProduct", null);
+__decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Find all Products' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Products fetched sucessfully' }),
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('limit')),
     __param(2, (0, common_1.Query)('status')),
-    __param(3, (0, common_1.Query)('q')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, String, String]),
+    __metadata("design:paramtypes", [Number, Number, String]),
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "fetchAllProducts", null);
 __decorate([
@@ -115,15 +122,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProductsAdminController.prototype, "findProductById", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Search a Products' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'fetched searched products' }),
-    (0, common_1.Get)('/search'),
-    __param(0, (0, common_1.Query)('q')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], ProductsAdminController.prototype, "searchProduct", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Update a Products' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Products updated' }),

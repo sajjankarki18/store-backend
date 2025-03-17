@@ -11,7 +11,7 @@ import { ProductRepository } from './repositories/product.repository';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { StatusEnum } from 'src/enums/status.enum';
-import { ILike, IsNull, Not } from 'typeorm';
+import { ILike, In, IsNull, Not } from 'typeorm';
 import { CreateProductVariantDto } from './dto/create-productVariant.dto';
 import { ProductVariant } from './entities/productVariant.entity';
 import { ProductVariantRepository } from './repositories/productVariant.repository';
@@ -91,12 +91,10 @@ export class ProductsService {
     page,
     limit,
     status,
-    query,
   }: {
     page: number;
     limit: number;
     status: StatusEnum;
-    query: string;
   }): Promise<{ data: Product[]; page: number; limit: number; total: number }> {
     if (isNaN(Number(page)) || isNaN(Number(limit)) || page < 0 || limit < 0) {
       throw new BadRequestException({
@@ -109,24 +107,26 @@ export class ProductsService {
     const new_limit: number =
       limit > 10 ? parseInt(process.env.PAGE_LIMIT) : limit;
 
-    const [data, total] = await this.productsRepository.findAndCount({
-      where: {
-        status:
-          status?.toLowerCase() === 'published'
-            ? StatusEnum.Published
-            : StatusEnum.Draft,
-        title: ILike(`%${query?.trim()}%`),
-      },
-      skip: (page - 1) * new_limit,
-      take: new_limit,
-      order: { created_at: 'desc' },
-    });
+    const [productsData, totalProducts] =
+      await this.productsRepository.findAndCount({
+        where: {
+          status:
+            !status || status.trim() === ''
+              ? In([StatusEnum.Published, StatusEnum.Draft])
+              : status.trim().toLowerCase() === StatusEnum.Published
+                ? StatusEnum.Published
+                : StatusEnum.Draft,
+        },
+        skip: (page - 1) * new_limit,
+        take: new_limit,
+        order: { created_at: 'DESC' },
+      });
 
     return {
-      data,
+      data: productsData,
       page,
       limit: new_limit,
-      total,
+      total: totalProducts,
     };
   }
 

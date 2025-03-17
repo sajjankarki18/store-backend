@@ -5,11 +5,13 @@ import { UpdateBannerDto } from './dto/update-banner.dto';
 import { RedirectTypeEnum } from 'src/enums/redirectTypes.enum';
 import { ProductRepository } from 'src/products/repositories/product.repository';
 import { CategoryRepository } from '../categories/repositories/Category.repository';
+import { CollectionRepository } from '../collections/repositories/collection.repository';
 export declare class BannersService {
     private readonly bannerRepository;
     private readonly productsRepository;
     private readonly categoriesRepository;
-    constructor(bannerRepository: BannerRepository, productsRepository: ProductRepository, categoriesRepository: CategoryRepository);
+    private readonly collectionRepository;
+    constructor(bannerRepository: BannerRepository, productsRepository: ProductRepository, categoriesRepository: CategoryRepository, collectionRepository: CollectionRepository);
     validateRedirects: (redirectId: string, redirectType: RedirectTypeEnum) => Promise<void>;
     limitBannersUpdation: () => Promise<void>;
     createBanner(bannerDto: CreateBannerDto): Promise<Banner>;
