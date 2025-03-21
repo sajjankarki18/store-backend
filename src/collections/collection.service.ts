@@ -147,9 +147,105 @@ export class CollectionService {
   }
 
   /* fetch collections with redirects for frontend */
-  async fetchCollectionsWithRedirects() {
-    return this.collectionRedirectRepository.find();
+  async fetchCollectionsWithRedirects(): Promise<{ data: any[] }> {
+    const collectionsRedirects = await this.collectionRedirectRepository.find();
+    const collectionRedirectData: any[] = [];
+
+    for (const redirect of collectionsRedirects) {
+      let redirects = null;
+
+      if (redirect.redirect_type === CollectionRedirectTypeEnum.Category) {
+        /* category redirect */
+        const categoryData = await this.productRepository.find({
+          where: {
+            category_id: redirect.redirect_id,
+          },
+        });
+
+        redirects = await Promise.all(
+          categoryData.map(async (category) => {
+            return { title: category.title, id: category.id };
+          }),
+        );
+      } else if (
+        /* product redirect */
+        redirect.redirect_type === CollectionRedirectTypeEnum.Product
+      ) {
+        const productsData = await this.productRepository.findOne({
+          where: {
+            id: redirect.redirect_id,
+          },
+        });
+
+        redirects = productsData
+          ? { title: productsData.title, id: productsData.id }
+          : { title: null, description: null };
+      }
+
+      collectionRedirectData.push({
+        ...redirect,
+        redirects,
+      });
+    }
+    return { data: collectionRedirectData };
   }
+
+  async fetchCollectionsRedirectDataFrontEnd(): Promise<{ data: any[] }> {
+    const collections = await this.collectionRepository.find();
+    const collectionRedirects = await this.collectionRedirectRepository.find();
+    const categories = await this.categoryRepository.find();
+
+    const collectionsDataArray: any[] = [];
+
+    for (const collection of collections) {
+      const productsDataArray: any[] = [];
+
+      const redirectsData = collectionRedirects.filter((collectionRedirect) => {
+        return collectionRedirect.collection_id === collection.id;
+      });
+
+      for (const redirect of redirectsData) {
+        if (redirect.redirect_type === CollectionRedirectTypeEnum.Category) {
+          const categoryData = await this.productRepository.find({
+            where: {
+              category_id: redirect.redirect_id,
+            },
+          });
+          productsDataArray.push(...categoryData);
+        } else if (
+          redirect.redirect_type === CollectionRedirectTypeEnum.Product
+        ) {
+          const productData = await this.productRepository.findOne({
+            where: {
+              id: redirect.redirect_id,
+            },
+          });
+
+          productsDataArray.push(productData);
+        }
+      }
+
+      collectionsDataArray.push({
+        title: collection.title,
+        products: productsDataArray.map((product) => {
+          const category = categories.find((category) => {
+            return category.id === product.category_id;
+          });
+          return {
+            id: product.id,
+            title: product.title,
+            category_id: category ? category.id : null,
+            name: category ? category.title : null,
+          };
+        }),
+      });
+    }
+
+    return {
+      data: collectionsDataArray,
+    };
+  }
+
   async updateCollection(id: string, collectionDto: UpdateCollectionDto) {
     const banner = await this.collectionRedirectRepository.findOne({
       where: { id },

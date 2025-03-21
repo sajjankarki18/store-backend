@@ -1,6 +1,11 @@
-import { BannersService } from '../banners/banners.service';
-export declare class BannersController {
-    private readonly bannerService;
-    constructor(bannerService: BannersService);
-    fetchCollectionsWithRedirects(): void;
+import { CollectionService } from './collection.service';
+export declare class CollectionsController {
+    private readonly collectionService;
+    constructor(collectionService: CollectionService);
+    fetchCollectionsWithRedirects(): Promise<{
+        data: any[];
+    }>;
+    fetchCollectionsRedirectDataFrontEnd(): Promise<{
+        data: any[];
+    }>;
 }

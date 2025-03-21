@@ -1,12 +1,19 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { BannersService } from '../banners/banners.service';
+import { CollectionService } from './collection.service';
 
 @ApiTags('Collections Frontend')
 @Controller('/collections')
-export class BannersController {
-  constructor(private readonly bannerService: BannersService) {}
+export class CollectionsController {
+  constructor(private readonly collectionService: CollectionService) {}
 
   @Get('/redirects')
-  fetchCollectionsWithRedirects() {}
+  fetchCollectionsWithRedirects() {
+    return this.collectionService.fetchCollectionsWithRedirects();
+  }
+
+  @Get('/redirect-data')
+  fetchCollectionsRedirectDataFrontEnd() {
+    return this.collectionService.fetchCollectionsRedirectDataFrontEnd();
+  }
 }

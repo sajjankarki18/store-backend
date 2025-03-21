@@ -8,28 +8,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppController = void 0;
+exports.InsightsController = void 0;
 const common_1 = require("@nestjs/common");
-const app_service_1 = require("./app.service");
-let AppController = class AppController {
-    constructor(appService) {
-        this.appService = appService;
+const insights_service_1 = require("./insights.service");
+let InsightsController = class InsightsController {
+    constructor(insightsService) {
+        this.insightsService = insightsService;
     }
-    getHello() {
-        return this.appService.getHello();
+    async getInSightsData() {
+        return this.insightsService.getInSightsData();
     }
 };
-exports.AppController = AppController;
+exports.InsightsController = InsightsController;
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
-], AppController.prototype, "getHello", null);
-exports.AppController = AppController = __decorate([
-    (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof app_service_1.AppService !== "undefined" && app_service_1.AppService) === "function" ? _a : Object])
-], AppController);
-//# sourceMappingURL=app.controller.js.map
+    __metadata("design:returntype", Promise)
+], InsightsController.prototype, "getInSightsData", null);
+exports.InsightsController = InsightsController = __decorate([
+    (0, common_1.Controller)('/admin/insights'),
+    __metadata("design:paramtypes", [insights_service_1.InsightsService])
+], InsightsController);
+//# sourceMappingURL=insights.admin.controller.js.map

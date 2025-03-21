@@ -18,6 +18,7 @@ const category_entity_1 = require("../categories/entities/category.entity");
 const categories_module_1 = require("../categories/categories.module");
 const products_module_1 = require("../products/products.module");
 const product_entity_1 = require("../products/entities/product.entity");
+const collection_controller_1 = require("./collection.controller");
 let CollectionsModule = class CollectionsModule {
 };
 exports.CollectionsModule = CollectionsModule;
@@ -33,7 +34,7 @@ exports.CollectionsModule = CollectionsModule = __decorate([
             (0, common_1.forwardRef)(() => categories_module_1.CategoriesModule),
             (0, common_1.forwardRef)(() => products_module_1.ProductsModule),
         ],
-        controllers: [collection_admin_controller_1.CollectionsAdminController],
+        controllers: [collection_admin_controller_1.CollectionsAdminController, collection_controller_1.CollectionsController],
         providers: [collection_service_1.CollectionService, collection_repository_1.CollectionRepository],
         exports: [collection_repository_1.CollectionRepository],
     })

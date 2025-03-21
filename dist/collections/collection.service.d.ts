@@ -30,7 +30,12 @@ export declare class CollectionService {
         limit: number;
         total: number;
     }>;
-    fetchCollectionsWithRedirects(): Promise<CollectionRedirect[]>;
+    fetchCollectionsWithRedirects(): Promise<{
+        data: any[];
+    }>;
+    fetchCollectionsRedirectDataFrontEnd(): Promise<{
+        data: any[];
+    }>;
     updateCollection(id: string, collectionDto: UpdateCollectionDto): Promise<CollectionRedirect>;
     deleteCollection(id: string): Promise<{
         id: string;

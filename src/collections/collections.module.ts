@@ -9,6 +9,7 @@ import { Category } from '../categories/entities/category.entity';
 import { CategoriesModule } from 'src/categories/categories.module';
 import { ProductsModule } from 'src/products/products.module';
 import { Product } from 'src/products/entities/product.entity';
+import { CollectionsController } from './collection.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { Product } from 'src/products/entities/product.entity';
     forwardRef(() => CategoriesModule),
     forwardRef(() => ProductsModule),
   ],
-  controllers: [CollectionsAdminController],
+  controllers: [CollectionsAdminController, CollectionsController],
   providers: [CollectionService, CollectionRepository],
   exports: [CollectionRepository],
 })

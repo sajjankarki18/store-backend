@@ -9,26 +9,37 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BannersController = void 0;
+exports.CollectionsController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
-const banners_service_1 = require("../banners/banners.service");
-let BannersController = class BannersController {
-    constructor(bannerService) {
-        this.bannerService = bannerService;
+const collection_service_1 = require("./collection.service");
+let CollectionsController = class CollectionsController {
+    constructor(collectionService) {
+        this.collectionService = collectionService;
     }
-    fetchCollectionsWithRedirects() { }
+    fetchCollectionsWithRedirects() {
+        return this.collectionService.fetchCollectionsWithRedirects();
+    }
+    fetchCollectionsRedirectDataFrontEnd() {
+        return this.collectionService.fetchCollectionsRedirectDataFrontEnd();
+    }
 };
-exports.BannersController = BannersController;
+exports.CollectionsController = CollectionsController;
 __decorate([
     (0, common_1.Get)('/redirects'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], BannersController.prototype, "fetchCollectionsWithRedirects", null);
-exports.BannersController = BannersController = __decorate([
+], CollectionsController.prototype, "fetchCollectionsWithRedirects", null);
+__decorate([
+    (0, common_1.Get)('/redirect-data'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], CollectionsController.prototype, "fetchCollectionsRedirectDataFrontEnd", null);
+exports.CollectionsController = CollectionsController = __decorate([
     (0, swagger_1.ApiTags)('Collections Frontend'),
     (0, common_1.Controller)('/collections'),
-    __metadata("design:paramtypes", [banners_service_1.BannersService])
-], BannersController);
+    __metadata("design:paramtypes", [collection_service_1.CollectionService])
+], CollectionsController);
 //# sourceMappingURL=collection.controller.js.map
